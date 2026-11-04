@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AlertaBairro | Informação local, prevenção coletiva</title>
+  <meta name="description" content="AlertaBairro: plataforma comunitária de monitoramento climático e comunicação preventiva sobre enchentes, alagamentos e deslizamentos. Projeto acadêmico FIAP.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/main.js" defer></script>
+</head>
+<body>
+  <svg class="sprite" aria-hidden="true" focusable="false">
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></symbol>
+    <symbol id="i-activity" viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></symbol>
+    <symbol id="i-map" viewBox="0 0 24 24"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14"/><path d="M15 6v14"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3L2 21h20L12 3z"/><path d="M12 10v5"/><path d="M12 18h.01"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0c0 6 2 7 2 8H4c0-1 2-2 2-8z"/><path d="M10 21h4"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6"/><circle cx="17" cy="9" r="2.5"/><path d="M18 14c2.5.5 4 2.5 4 5"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><path d="M4 6h10"/><path d="M18 6h2"/><circle cx="16" cy="6" r="2"/><path d="M4 12h2"/><path d="M10 12h10"/><circle cx="8" cy="12" r="2"/><path d="M4 18h10"/><path d="M18 18h2"/><circle cx="16" cy="18" r="2"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="i-droplet" viewBox="0 0 24 24"><path d="M12 3s7 7.5 7 12a7 7 0 0 1-14 0c0-4.5 7-12 7-12z"/></symbol>
+    <symbol id="i-cloud-rain" viewBox="0 0 24 24"><path d="M7 15a4.5 4.5 0 0 1-.5-9A6 6 0 0 1 18 7.5a4 4 0 0 1-.5 7.5H7z"/><path d="M8 18l-1 3M12 18l-1 3M16 18l-1 3"/></symbol>
+    <symbol id="i-thermometer" viewBox="0 0 24 24"><path d="M14 14.5V5a2 2 0 0 0-4 0v9.5a4 4 0 1 0 4 0z"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s7-6 7-11a7 7 0 0 0-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"/><path d="M9 12l2 2 4-4"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></symbol>
+  </svg>
+  <a class="skip-link" href="#conteudo">Ir para o conteúdo principal</a>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html" aria-label="AlertaBairro, página inicial">
+        <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <path d="M16 2C16 2 6 13.5 6 20a10 10 0 0 0 20 0C26 13.5 16 2 16 2Z" fill="#8dc3ea"/>
+          <path d="M11 20.5l3.5 3.5 7-7.5" fill="none" stroke="#0b2545" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>AlertaBairro</span>
+      </a>
+      <button class="menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="menu-principal">
+        <span class="sr-only">Abrir menu</span>
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <nav aria-label="Navegação principal">
+        <ul class="menu" id="menu-principal">
+          <li><a href="index.html" aria-current="page">Início</a></li>
+          <li><a href="solucao.html">Solução</a></li>
+          <li><a href="impacto.html">Impacto e ODS</a></li>
+          <li><a href="equipe.html">Equipe</a></li>
+          <li><a class="menu-cta" href="solucao.html">Abrir painel</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="conteudo">
+
+    <section class="hero" aria-labelledby="titulo-hero">
+      <div class="container hero-inner">
+        <div>
+          <p class="hero-tagline">Informação local. Prevenção coletiva. Vidas protegidas.</p>
+          <h1 id="titulo-hero">AlertaBairro</h1>
+          <p class="lead">Uma plataforma comunitária com mapa por satélite que mostra o nível de risco de enchentes, alagamentos e deslizamentos bairro a bairro e leva orientações de prevenção a quem mora em áreas vulneráveis.</p>
+          <div class="btn-row">
+            <a class="btn btn-light" href="solucao.html">Abrir o painel</a>
+            <a class="btn btn-outline-light" href="impacto.html">Conhecer o impacto</a>
+          </div>
+        </div>
+        <aside class="snapshot" aria-label="Prévia do painel">
+          <div class="snapshot-head"><h2>Bairros com mais chuva</h2><span class="badge badge-neutro">Dados simulados</span></div>
+          <ul id="previa-lista"></ul>
+          <p class="snapshot-note">Prévia com os mesmos dados demonstrativos do painel. Não são medições nem alertas oficiais.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="titulo-problema">
+      <div class="container grid problem-grid">
+        <div>
+          <h2 id="titulo-problema">O problema</h2>
+          <p class="lead">Quem mora perto de encostas ou em áreas que alagam muitas vezes descobre o risco só quando a chuva já começou.</p>
+          <ul class="problem-list">
+            <li>Enchentes que atingem casas, ruas e serviços essenciais.</li>
+            <li>Alagamentos urbanos que bloqueiam o deslocamento e isolam bairros.</li>
+            <li>Deslizamentos de terra em encostas ocupadas.</li>
+            <li>Falta de informação preventiva clara e em linguagem simples.</li>
+            <li>Dificuldade de saber, de forma rápida, qual é o risco no próprio bairro.</li>
+          </ul>
+        </div>
+        <figure class="stat">
+          <p class="stat-number">8,2 milhões</p>
+          <p>de pessoas viviam em áreas de risco de deslizamentos, inundações e enxurradas nos municípios monitorados pelo Cemaden, segundo estimativa baseada no Censo 2010.</p>
+          <figcaption class="stat-source">Fonte: IBGE e Cemaden, <cite>População em Áreas de Risco no Brasil</cite>, 2018. <a href="https://www.ibge.gov.br/apps/populacaoareasderisco/" target="_blank" rel="noopener noreferrer">Acessar a fonte original (abre em nova aba)</a>.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="titulo-recursos">
+      <div class="container">
+        <div class="section-head">
+          <h2 id="titulo-recursos">O que você encontra no painel</h2>
+          <p class="lead">Três ferramentas para acompanhar o risco e agir com a comunidade.</p>
+        </div>
+        <div class="grid grid-3">
+          <article class="card"><div class="feature-icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-map"/></svg></div><h3>Mapa inteligente</h3><p>Bairros marcados por nível de risco, com visão padrão ou por satélite e detalhes ao clicar.</p></article>
+          <article class="card"><div class="feature-icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-alert"/></svg></div><h3>Registro comunitário</h3><p>Moradores relatam alagamentos, deslizamentos e vias interditadas. Todo relato é identificado como não verificado.</p></article>
+          <article class="card"><div class="feature-icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-bell"/></svg></div><h3>Alertas personalizados</h3><p>Escolha seus bairros, veja o nível de alerta e o histórico. No protótipo, os alertas são simulados dentro do aplicativo.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt" aria-labelledby="titulo-solucao">
+      <div class="container">
+        <div class="section-head">
+          <h2 id="titulo-solucao">Como o AlertaBairro funciona</h2>
+          <p class="lead">Cinco passos para transformar informação em prevenção.</p>
+        </div>
+        <ol class="steps">
+          <li><strong>Consulte os indicadores por bairro.</strong> Veja chuva e temperatura de cada localidade.</li>
+          <li><strong>Visualize o nível de risco.</strong> Badges e cores indicam risco baixo, moderado ou alto.</li>
+          <li><strong>Identifique as áreas que exigem atenção.</strong> Filtros ajudam a encontrar rapidamente os bairros de risco alto.</li>
+          <li><strong>Acompanhe alertas e registre relatos.</strong> No protótipo, alertas e inscrição são demonstrativos.</li>
+          <li><strong>Prepare a comunidade.</strong> Orientações práticas incentivam a prevenção e a colaboração entre vizinhos.</li>
+        </ol>
+        <div class="btn-row">
+          <a class="btn btn-primary" href="solucao.html">Explorar o painel</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="titulo-beneficiarios">
+      <div class="container">
+        <div class="section-head">
+          <h2 id="titulo-beneficiarios">Quem se beneficia</h2>
+        </div>
+        <div class="grid grid-3">
+          <article class="card"><h3>Moradores de áreas vulneráveis</h3><p>Acesso simples a informações de risco do próprio bairro.</p></article>
+          <article class="card"><h3>Comunidades periféricas</h3><p>Comunicação preventiva em linguagem direta, pensada para o uso no celular.</p></article>
+          <article class="card"><h3>Famílias perto de encostas e áreas alagáveis</h3><p>Orientações para decidir com antecedência o que fazer em dias de chuva forte.</p></article>
+          <article class="card"><h3>Lideranças comunitárias</h3><p>Um painel para conversar com vizinhos sobre prevenção e organização local.</p></article>
+          <article class="card"><h3>Pessoas interessadas em prevenção climática</h3><p>Um ponto de partida para entender riscos e acompanhar fontes oficiais.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt" aria-labelledby="titulo-ods">
+      <div class="container">
+        <div class="section-head">
+          <h2 id="titulo-ods">Indicadores e ODS</h2>
+        </div>
+        <div class="grid grid-2">
+          <article class="card">
+            <h3>ODS 13: Ação contra a Mudança Global do Clima</h3>
+            <p>O AlertaBairro apoia a adaptação climática ao ampliar o acesso à informação sobre riscos e fortalecer a capacidade da comunidade de se preparar para eventos extremos.</p>
+          </article>
+          <article class="card">
+            <h3>ODS 11: Cidades e Comunidades Sustentáveis</h3>
+            <p>Ao reduzir a vulnerabilidade de moradores, o projeto contribui para cidades mais seguras e resilientes.</p>
+          </article>
+        </div>
+        <div class="btn-row">
+          <a class="btn btn-secondary" href="impacto.html">Ver impacto e referências</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="titulo-cta">
+      <div class="container">
+        <div class="cta-band">
+          <h2 id="titulo-cta">Conheça o risco do seu bairro</h2>
+          <p>Explore os dados demonstrativos e teste o cadastro de alertas.</p>
+          <a class="btn btn-primary" href="solucao.html">Abrir monitoramento</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h2>AlertaBairro</h2>
+          <p>Plataforma comunitária de monitoramento climático e comunicação preventiva. Projeto acadêmico demonstrativo.</p>
+        </div>
+        <nav aria-label="Navegação do rodapé">
+          <h2>Navegação</h2>
+          <ul class="footer-links">
+            <li><a href="index.html">Início</a></li>
+            <li><a href="solucao.html">Solução</a></li>
+            <li><a href="impacto.html">Impacto e ODS</a></li>
+            <li><a href="equipe.html">Equipe</a></li>
+          </ul>
+        </nav>
+        <div>
+          <h2>Identificação acadêmica</h2>
+          <p>FIAP<br>Global Solution 2026/2<br>Tema: CitizenTech</p>
+        </div>
+      </div>
+      <div class="footer-note">
+        <p>Os indicadores climáticos exibidos são simulados para fins acadêmicos e não substituem alertas oficiais da Defesa Civil, do Cemaden ou do INMET.</p>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

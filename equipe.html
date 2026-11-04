@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Equipe | AlertaBairro</title>
+  <meta name="description" content="Integrantes do projeto AlertaBairro, responsabilidades e processo de desenvolvimento da Global Solution FIAP 2026/2.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/main.js" defer></script>
+</head>
+<body>
+  <svg class="sprite" aria-hidden="true" focusable="false">
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></symbol>
+    <symbol id="i-activity" viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></symbol>
+    <symbol id="i-map" viewBox="0 0 24 24"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14"/><path d="M15 6v14"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3L2 21h20L12 3z"/><path d="M12 10v5"/><path d="M12 18h.01"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0c0 6 2 7 2 8H4c0-1 2-2 2-8z"/><path d="M10 21h4"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6"/><circle cx="17" cy="9" r="2.5"/><path d="M18 14c2.5.5 4 2.5 4 5"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><path d="M4 6h10"/><path d="M18 6h2"/><circle cx="16" cy="6" r="2"/><path d="M4 12h2"/><path d="M10 12h10"/><circle cx="8" cy="12" r="2"/><path d="M4 18h10"/><path d="M18 18h2"/><circle cx="16" cy="18" r="2"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="i-droplet" viewBox="0 0 24 24"><path d="M12 3s7 7.5 7 12a7 7 0 0 1-14 0c0-4.5 7-12 7-12z"/></symbol>
+    <symbol id="i-cloud-rain" viewBox="0 0 24 24"><path d="M7 15a4.5 4.5 0 0 1-.5-9A6 6 0 0 1 18 7.5a4 4 0 0 1-.5 7.5H7z"/><path d="M8 18l-1 3M12 18l-1 3M16 18l-1 3"/></symbol>
+    <symbol id="i-thermometer" viewBox="0 0 24 24"><path d="M14 14.5V5a2 2 0 0 0-4 0v9.5a4 4 0 1 0 4 0z"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s7-6 7-11a7 7 0 0 0-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"/><path d="M9 12l2 2 4-4"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></symbol>
+  </svg>
+  <a class="skip-link" href="#conteudo">Ir para o conteúdo principal</a>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html" aria-label="AlertaBairro, página inicial">
+        <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <path d="M16 2C16 2 6 13.5 6 20a10 10 0 0 0 20 0C26 13.5 16 2 16 2Z" fill="#8dc3ea"/>
+          <path d="M11 20.5l3.5 3.5 7-7.5" fill="none" stroke="#0b2545" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>AlertaBairro</span>
+      </a>
+      <button class="menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="menu-principal">
+        <span class="sr-only">Abrir menu</span>
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <nav aria-label="Navegação principal">
+        <ul class="menu" id="menu-principal">
+          <li><a href="index.html">Início</a></li>
+          <li><a href="solucao.html">Solução</a></li>
+          <li><a href="impacto.html">Impacto e ODS</a></li>
+          <li><a href="equipe.html" aria-current="page">Equipe</a></li>
+          <li><a class="menu-cta" href="solucao.html">Abrir painel</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="conteudo">
+
+    <section class="page-hero" aria-labelledby="titulo-equipe">
+      <div class="container">
+        <h1 id="titulo-equipe">Nossa Equipe</h1>
+        <p class="lead">Estudantes da FIAP desenvolvendo o AlertaBairro para a Global Solution 2026/2, tema CitizenTech.</p>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="titulo-integrantes">
+      <div class="container">
+        <h2 id="titulo-integrantes">Integrantes</h2>
+        <p>Os dados abaixo são provisórios. Substitua os campos entre colchetes pelas informações reais do grupo e duplique ou remova cards conforme o número de integrantes.</p>
+        <div class="grid grid-2">
+          <article class="card team-card">
+            <div class="avatar" role="img" aria-label="Avatar provisório do integrante 1">?</div>
+            <h3>[Nome completo do integrante 1]</h3>
+            <dl>
+              <dt>RM</dt><dd>[RM a preencher]</dd>
+              <dt>Curso</dt><dd>[Curso a preencher]</dd>
+              <dt>Responsabilidade no projeto</dt><dd>[Responsabilidade a preencher]</dd>
+            </dl>
+            <div class="team-links">
+              <span class="link-pendente">GitHub: link pendente</span>
+              <span class="link-pendente">LinkedIn: link pendente</span>
+            </div>
+          </article>
+          <article class="card team-card">
+            <div class="avatar" role="img" aria-label="Avatar provisório do integrante 2">?</div>
+            <h3>[Nome completo do integrante 2]</h3>
+            <dl>
+              <dt>RM</dt><dd>[RM a preencher]</dd>
+              <dt>Curso</dt><dd>[Curso a preencher]</dd>
+              <dt>Responsabilidade no projeto</dt><dd>[Responsabilidade a preencher]</dd>
+            </dl>
+            <div class="team-links">
+              <span class="link-pendente">GitHub: link pendente</span>
+              <span class="link-pendente">LinkedIn: link pendente</span>
+            </div>
+          </article>
+          <article class="card team-card">
+            <div class="avatar" role="img" aria-label="Avatar provisório do integrante 3">?</div>
+            <h3>[Nome completo do integrante 3]</h3>
+            <dl>
+              <dt>RM</dt><dd>[RM a preencher]</dd>
+              <dt>Curso</dt><dd>[Curso a preencher]</dd>
+              <dt>Responsabilidade no projeto</dt><dd>[Responsabilidade a preencher]</dd>
+            </dl>
+            <div class="team-links">
+              <span class="link-pendente">GitHub: link pendente</span>
+              <span class="link-pendente">LinkedIn: link pendente</span>
+            </div>
+          </article>
+          <article class="card team-card">
+            <div class="avatar" role="img" aria-label="Avatar provisório do integrante 4">?</div>
+            <h3>[Nome completo do integrante 4]</h3>
+            <dl>
+              <dt>RM</dt><dd>[RM a preencher]</dd>
+              <dt>Curso</dt><dd>[Curso a preencher]</dd>
+              <dt>Responsabilidade no projeto</dt><dd>[Responsabilidade a preencher]</dd>
+            </dl>
+            <div class="team-links">
+              <span class="link-pendente">GitHub: link pendente</span>
+              <span class="link-pendente">LinkedIn: link pendente</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt" aria-labelledby="titulo-processo">
+      <div class="container">
+        <h2 id="titulo-processo">Processo de desenvolvimento e divisão de responsabilidades</h2>
+        <p>O trabalho foi organizado em etapas. A divisão entre integrantes deve ser registrada aqui e no README.</p>
+        <ol class="steps">
+          <li><strong>Pesquisa e definição do problema.</strong> Levantamento de dados oficiais sobre áreas de risco e escolha dos ODS.</li>
+          <li><strong>Design e identidade visual.</strong> Paleta, componentes e protótipo de navegação. Responsável: [a definir].</li>
+          <li><strong>Desenvolvimento front-end.</strong> HTML, CSS e JavaScript do painel, dos filtros e do formulário. Responsável: [a definir].</li>
+          <li><strong>Conteúdo, documentação e pitch.</strong> Textos institucionais, README e vídeo. Responsável: [a definir].</li>
+          <li><strong>Testes e revisão.</strong> Responsividade, acessibilidade e revisão do uso de IA generativa. Responsável: [a definir].</li>
+        </ol>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h2>AlertaBairro</h2>
+          <p>Plataforma comunitária de monitoramento climático e comunicação preventiva. Projeto acadêmico demonstrativo.</p>
+        </div>
+        <nav aria-label="Navegação do rodapé">
+          <h2>Navegação</h2>
+          <ul class="footer-links">
+            <li><a href="index.html">Início</a></li>
+            <li><a href="solucao.html">Solução</a></li>
+            <li><a href="impacto.html">Impacto e ODS</a></li>
+            <li><a href="equipe.html">Equipe</a></li>
+          </ul>
+        </nav>
+        <div>
+          <h2>Identificação acadêmica</h2>
+          <p>FIAP<br>Global Solution 2026/2<br>Tema: CitizenTech</p>
+        </div>
+      </div>
+      <div class="footer-note">
+        <p>Os indicadores climáticos exibidos são simulados para fins acadêmicos e não substituem alertas oficiais da Defesa Civil, do Cemaden ou do INMET.</p>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

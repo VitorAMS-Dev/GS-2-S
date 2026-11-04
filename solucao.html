@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Painel | AlertaBairro</title>
+  <meta name="description" content="Painel do AlertaBairro: mapa interativo com satélite, monitoramento por bairro, relatos comunitários e alertas simulados.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="lib/leaflet/leaflet.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="lib/leaflet/leaflet.js" defer></script>
+  <script src="js/main.js" defer></script>
+  <script src="js/app.js" defer></script>
+</head>
+<body class="app" id="app-root">
+  <svg class="sprite" aria-hidden="true" focusable="false">
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></symbol>
+    <symbol id="i-activity" viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></symbol>
+    <symbol id="i-map" viewBox="0 0 24 24"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14"/><path d="M15 6v14"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3L2 21h20L12 3z"/><path d="M12 10v5"/><path d="M12 18h.01"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0c0 6 2 7 2 8H4c0-1 2-2 2-8z"/><path d="M10 21h4"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6"/><circle cx="17" cy="9" r="2.5"/><path d="M18 14c2.5.5 4 2.5 4 5"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><path d="M4 6h10"/><path d="M18 6h2"/><circle cx="16" cy="6" r="2"/><path d="M4 12h2"/><path d="M10 12h10"/><circle cx="8" cy="12" r="2"/><path d="M4 18h10"/><path d="M18 18h2"/><circle cx="16" cy="18" r="2"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="i-droplet" viewBox="0 0 24 24"><path d="M12 3s7 7.5 7 12a7 7 0 0 1-14 0c0-4.5 7-12 7-12z"/></symbol>
+    <symbol id="i-cloud-rain" viewBox="0 0 24 24"><path d="M7 15a4.5 4.5 0 0 1-.5-9A6 6 0 0 1 18 7.5a4 4 0 0 1-.5 7.5H7z"/><path d="M8 18l-1 3M12 18l-1 3M16 18l-1 3"/></symbol>
+    <symbol id="i-thermometer" viewBox="0 0 24 24"><path d="M14 14.5V5a2 2 0 0 0-4 0v9.5a4 4 0 1 0 4 0z"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s7-6 7-11a7 7 0 0 0-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"/><path d="M9 12l2 2 4-4"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></symbol>
+  </svg>
+  <a class="skip-link" href="#conteudo">Ir para o conteúdo principal</a>
+
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar" aria-label="Menu do aplicativo">
+      <div class="sidebar-top">
+        <a class="brand" href="index.html" aria-label="AlertaBairro, voltar ao site">
+          <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M16 2C16 2 6 13.5 6 20a10 10 0 0 0 20 0C26 13.5 16 2 16 2Z" fill="#8dc3ea"/><path d="M11 20.5l3.5 3.5 7-7.5" fill="none" stroke="#0b2545" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>AlertaBairro</span>
+        </a>
+        <button class="sidebar-close" id="sidebar-fechar" type="button" aria-label="Fechar menu"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-x"/></svg></button>
+      </div>
+      <nav class="side-nav" aria-label="Seções do painel">
+        <ul>
+          <li><a href="#visao-geral" data-nav="visao-geral"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-home"/></svg> Visão geral</a></li>
+          <li><a href="#monitoramento" data-nav="monitoramento"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-activity"/></svg> Monitoramento</a></li>
+          <li><a href="#mapa" data-nav="mapa"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-map"/></svg> Mapa inteligente</a></li>
+          <li><a href="#ocorrencias" data-nav="ocorrencias"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-alert"/></svg> Ocorrências <span class="nav-count" id="nav-count-ocorrencias" hidden>0</span></a></li>
+          <li><a href="#alertas" data-nav="alertas"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-bell"/></svg> Alertas <span class="nav-count" id="nav-count-alertas" hidden>0</span></a></li>
+          <li><a href="#comunidade" data-nav="comunidade"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-users"/></svg> Comunidade</a></li>
+          <li><a href="#configuracoes" data-nav="configuracoes"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-settings"/></svg> Configurações</a></li>
+        </ul>
+      </nav>
+      <div class="sidebar-foot">
+        <a href="index.html">Voltar ao site</a>
+        <p>Protótipo acadêmico da Global Solution FIAP 2026/2. Dados simulados e alertas demonstrativos, sem envio real.</p>
+      </div>
+    </aside>
+    <div class="sidebar-overlay" id="sidebar-overlay" hidden></div>
+
+    <div class="app-main">
+      <header class="topbar">
+        <button class="icon-btn menu-btn" id="btn-menu" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="sidebar"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-menu"/></svg></button>
+        <div class="search-box">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-search"/></svg>
+          <label class="sr-only" for="busca-global">Buscar bairro</label>
+          <input type="search" id="busca-global" placeholder="Buscar bairro ou cidade" autocomplete="off" aria-controls="busca-resultados">
+          <ul class="search-results" id="busca-resultados" hidden></ul>
+        </div>
+        <div class="loc-select">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-pin"/></svg>
+          <label class="sr-only" for="sel-cidade">Localização</label>
+          <select id="sel-cidade"><option value="">Todas as cidades</option></select>
+        </div>
+        <button class="btn btn-primary btn-quick" id="btn-nova-ocorrencia" type="button"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-plus"/></svg> Registrar ocorrência</button>
+        <button class="icon-btn" id="btn-notificacoes" type="button" aria-label="Notificações" aria-expanded="false" aria-controls="painel-notificacoes"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-bell"/></svg><span class="dot" id="notif-dot" hidden>0</span></button>
+        <a class="profile-link" href="#configuracoes" aria-label="Perfil e configurações"><span class="profile-avatar" id="perfil-avatar">V</span><span class="profile-name" id="perfil-nome">Visitante</span></a>
+        <div class="popover" id="painel-notificacoes" hidden>
+          <div class="popover-head"><h2>Notificações</h2><button class="link-btn" id="notif-ler-todas" type="button">Marcar todas como lidas</button></div>
+          <div class="popover-body"><ul class="list" id="notif-lista"></ul></div>
+          <div class="popover-foot"><a href="#alertas">Ver histórico de alertas</a>. Alertas simulados, sem SMS, WhatsApp, e-mail ou push.</div>
+        </div>
+      </header>
+
+      <main id="conteudo" class="content">
+
+        <section class="view" id="view-visao-geral" data-view="visao-geral">
+          <div class="view-head">
+            <h1 id="saudacao">Olá</h1>
+            <p id="resumo-geral"></p>
+          </div>
+          <div class="notice" role="note"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-info"/></svg><p><strong>Dados simulados.</strong> Chuva, temperatura e risco são inventados para fins acadêmicos e não substituem alertas oficiais. Em caso de risco real, ligue para a Defesa Civil (199).</p></div>
+          <dl class="kpis">
+            <div class="kpi"><dt class="kpi-top"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-pin"/></svg> Bairros monitorados</dt><dd class="kpi-value" id="kpi-total">0</dd></div>
+            <div class="kpi"><dt class="kpi-top"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-alert"/></svg> Com risco alto</dt><dd class="kpi-value" id="kpi-alto">0</dd></div>
+            <div class="kpi"><dt class="kpi-top"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-cloud-rain"/></svg> Chuva média</dt><dd class="kpi-value" id="kpi-chuva">0 mm</dd></div>
+            <div class="kpi"><dt class="kpi-top"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-thermometer"/></svg> Temperatura média</dt><dd class="kpi-value" id="kpi-temp">0 °C</dd></div>
+          </dl>
+          <div class="dash-grid">
+            <div class="dash-col">
+              <div id="slot-mapa-geral">
+                <section class="card map-card" id="map-card" aria-labelledby="mapa-titulo">
+                  <div class="map-top">
+                    <h2 id="mapa-titulo">Mapa inteligente</h2>
+                    <div class="map-tools">
+                      <div class="segmented" id="base-seg" role="group" aria-label="Tipo de mapa">
+                        <button type="button" data-base="padrao" aria-pressed="true">Padrão</button>
+                        <button type="button" data-base="satelite" aria-pressed="false">Satélite</button>
+                      </div>
+                      <label class="toggle-line"><input type="checkbox" id="camada-bairros" checked> Bairros</label>
+                      <label class="toggle-line"><input type="checkbox" id="camada-ocorrencias" checked> Relatos comunitários</label>
+                    </div>
+                  </div>
+                  <div class="map-wrap">
+                    <div id="mapa" class="map-canvas" role="region" aria-label="Mapa interativo dos bairros monitorados"></div>
+                    <div class="pick-banner" id="pick-banner" hidden><span>Clique no mapa para marcar o local do relato.</span><button class="btn btn-light btn-sm" id="pick-cancelar" type="button">Cancelar</button></div>
+                    <div class="legend" aria-label="Legenda do mapa">
+                      <span class="legend-item"><span class="sw baixo"></span> Risco baixo</span>
+                      <span class="legend-item"><span class="sw moderado"></span> Risco moderado</span>
+                      <span class="legend-item"><span class="sw alto"></span> Risco alto</span>
+                      <span class="legend-item"><span class="sw diamond"></span> Relato comunitário (não verificado)</span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <section class="card" aria-labelledby="t-atencao">
+                <div class="card-head"><h2 id="t-atencao">Bairros em atenção</h2><a href="#monitoramento">Ver todos os bairros</a></div>
+                <ul class="list" id="lista-atencao"></ul>
+              </section>
+              <section class="card" aria-labelledby="t-orient">
+                <div class="card-head"><h2 id="t-orient">Orientações preventivas</h2></div>
+                <div class="tips" id="lista-orientacoes"></div>
+              </section>
+            </div>
+            <div class="dash-col">
+              <section class="card" aria-labelledby="t-alertas-rec">
+                <div class="card-head"><h2 id="t-alertas-rec">Alertas recentes</h2><a href="#alertas">Ver histórico</a></div>
+                <ul class="list" id="lista-alertas-recentes"></ul>
+              </section>
+              <section class="card" aria-labelledby="t-ult-occ">
+                <div class="card-head"><h2 id="t-ult-occ">Últimas ocorrências</h2><a href="#ocorrencias">Ver todas</a></div>
+                <ul class="list" id="lista-ultimas-ocorrencias"></ul>
+                <p class="occ-note">Relatos comunitários não verificados.</p>
+              </section>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="view-monitoramento" data-view="monitoramento" hidden>
+          <div class="view-head">
+            <h1>Monitoramento por bairro</h1>
+            <p>Consulte nível de risco, chuva e temperatura (simulados) e as orientações de cada bairro.</p>
+          </div>
+          <div class="notice" role="note"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-info"/></svg><p><strong>Dados simulados.</strong> Os bairros são referências reais, mas os indicadores são inventados para fins acadêmicos.</p></div>
+          <form class="toolbar" role="search" aria-label="Filtrar bairros" novalidate>
+            <div class="field"><label for="mon-busca">Buscar bairro pelo nome</label><input type="search" id="mon-busca" placeholder="Ex.: Ibura" autocomplete="off"></div>
+            <div class="field"><label for="mon-risco">Nível de risco</label>
+              <select id="mon-risco"><option value="">Todos os níveis</option><option value="Alto">Risco alto</option><option value="Moderado">Risco moderado</option><option value="Baixo">Risco baixo</option></select></div>
+            <div><button type="button" class="btn btn-secondary" id="mon-limpar">Limpar filtros</button></div>
+          </form>
+          <p class="muted" id="contagem-mon" role="status" aria-live="polite"></p>
+          <div class="cards-bairros" id="cards-bairros"></div>
+          <div class="empty" id="estado-vazio-mon" hidden><h3>Nenhum bairro encontrado</h3><p>Confira a grafia do nome ou escolha outro nível de risco. Use "Limpar filtros" para ver todos.</p></div>
+        </section>
+
+        <section class="view" id="view-mapa" data-view="mapa" hidden>
+          <div class="view-head">
+            <h1>Mapa inteligente</h1>
+            <p>Explore os bairros por nível de risco, alterne para satélite e veja os relatos da comunidade.</p>
+          </div>
+          <div class="map-view-grid">
+            <div id="slot-mapa-grande"></div>
+            <aside class="card" id="painel-bairro" aria-live="polite"></aside>
+          </div>
+        </section>
+
+        <section class="view" id="view-ocorrencias" data-view="ocorrencias" hidden>
+          <div class="view-head">
+            <h1>Registro comunitário de ocorrências</h1>
+            <p>Moradores relatam problemas observados no bairro. Todo relato é comunitário e não verificado.</p>
+          </div>
+          <div class="two-col">
+            <section class="card" aria-labelledby="t-form-occ">
+              <div class="card-head"><h2 id="t-form-occ">Registrar ocorrência</h2></div>
+              <form id="form-ocorrencia" novalidate>
+                <div class="form-grid">
+                  <div class="field"><label for="occ-tipo">Tipo de ocorrência</label>
+                    <select id="occ-tipo" required aria-describedby="erro-occ-tipo" aria-invalid="false"><option value="">Selecione o tipo</option></select><p class="erro-campo" id="erro-occ-tipo"></p></div>
+                  <div class="field"><label for="occ-gravidade">Nível de gravidade</label>
+                    <select id="occ-gravidade" required aria-describedby="erro-occ-gravidade" aria-invalid="false"><option value="">Selecione</option></select><p class="erro-campo" id="erro-occ-gravidade"></p></div>
+                  <div class="field full"><label for="occ-bairro">Bairro</label>
+                    <select id="occ-bairro" required aria-describedby="erro-occ-bairro" aria-invalid="false"></select><p class="erro-campo" id="erro-occ-bairro"></p></div>
+                  <div class="field full"><label for="occ-data">Data e horário da observação</label>
+                    <input type="datetime-local" id="occ-data" required aria-describedby="erro-occ-data" aria-invalid="false"><p class="erro-campo" id="erro-occ-data"></p></div>
+                  <div class="field full"><label for="occ-descricao">Descrição</label>
+                    <textarea id="occ-descricao" maxlength="300" required aria-describedby="occ-contador erro-occ-descricao" aria-invalid="false" placeholder="O que você viu? Onde exatamente?"></textarea>
+                    <span class="hint" id="occ-contador">0/280</span><p class="erro-campo" id="erro-occ-descricao"></p></div>
+                  <div class="field full"><span class="hint">Localização</span><div class="loc-chip" id="occ-local"></div></div>
+                </div>
+                <div class="btn-row"><button type="submit" class="btn btn-primary"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-plus"/></svg> Registrar relato</button></div>
+                <div id="feedback-occ" role="status" aria-live="polite" hidden></div>
+              </form>
+            </section>
+            <section class="card" aria-labelledby="t-lista-occ">
+              <div class="card-head"><h2 id="t-lista-occ">Relatos da comunidade</h2><p id="contagem-occ" role="status" aria-live="polite"></p></div>
+              <div class="toolbar two">
+                <div class="field"><label for="occ-filtro-bairro">Bairro</label><select id="occ-filtro-bairro"></select></div>
+                <div class="field"><label for="occ-filtro-tipo">Tipo</label><select id="occ-filtro-tipo"><option value="">Todos os tipos</option></select></div>
+                <div><button type="button" class="btn btn-secondary" id="occ-limpar">Limpar filtros</button></div>
+              </div>
+              <ul class="list" id="lista-ocorrencias"></ul>
+              <div class="empty" id="estado-vazio-occ" hidden><h3>Nenhum relato encontrado</h3><p>Ajuste os filtros ou registre a primeira ocorrência deste bairro.</p></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" id="view-alertas" data-view="alertas" hidden>
+          <div class="view-head">
+            <h1>Alertas personalizados</h1>
+            <p>Escolha um bairro para ver o alerta atual, o nível de risco e as orientações de prevenção.</p>
+          </div>
+          <div class="notice" role="note"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-info"/></svg><p><strong>Alertas simulados.</strong> Eles aparecem apenas dentro desta aplicação. Nenhum SMS, WhatsApp, e-mail ou push é enviado.</p></div>
+          <div class="stack">
+            <div class="toolbar two">
+              <div class="field"><label for="alerta-bairro">Bairro</label><select id="alerta-bairro"></select></div>
+              <div><button type="button" class="btn btn-primary" id="alerta-simular"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-cloud-rain"/></svg> Simular atualização de chuva</button></div>
+              <div><button type="button" class="btn btn-secondary" id="alerta-ler"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-check"/></svg> Marcar todos como lidos</button></div>
+            </div>
+            <section id="alerta-atual" class="card" aria-live="polite"></section>
+            <div class="legend-inline" aria-label="Tipos de alerta">
+              <span class="badge badge-informativo">Informativo: risco baixo</span>
+              <span class="badge badge-atencao">Atenção: risco moderado</span>
+              <span class="badge badge-elevado">Risco elevado: risco alto</span>
+            </div>
+            <div class="two-col even">
+              <section class="card" aria-labelledby="t-hist">
+                <div class="card-head"><h2 id="t-hist">Histórico de alertas</h2></div>
+                <ul class="list" id="alerta-historico"></ul>
+                <div class="empty" id="estado-vazio-alt" hidden><h3>Nenhum alerta no histórico</h3><p>Use "Simular atualização de chuva" para gerar um alerta de demonstração.</p></div>
+              </section>
+              <section class="card" aria-labelledby="t-inscricao">
+                <div class="card-head"><h2 id="t-inscricao">Receba alertas do seu bairro</h2></div>
+                <p class="muted">Inscrição demonstrativa: fica apenas neste navegador e <strong>não envia alertas reais</strong>.</p>
+                <form id="form-alerta" novalidate>
+                  <div class="form-grid">
+                    <div class="field full"><label for="nome">Nome completo</label><input type="text" id="nome" autocomplete="name" required aria-describedby="erro-nome" aria-invalid="false"><p class="erro-campo" id="erro-nome"></p></div>
+                    <div class="field full"><label for="email">E-mail</label><input type="email" id="email" autocomplete="email" required aria-describedby="erro-email" aria-invalid="false"><p class="erro-campo" id="erro-email"></p></div>
+                    <div class="field"><label for="cep">CEP</label><input type="text" id="cep" inputmode="numeric" autocomplete="postal-code" maxlength="9" placeholder="00000-000" required aria-describedby="erro-cep" aria-invalid="false"><p class="erro-campo" id="erro-cep"></p></div>
+                    <div class="field"><label for="bairro">Bairro</label><select id="bairro" required aria-describedby="erro-bairro" aria-invalid="false"></select><p class="erro-campo" id="erro-bairro"></p></div>
+                  </div>
+                  <div class="btn-row"><button type="submit" class="btn btn-primary">Cadastrar para alertas</button></div>
+                  <div id="feedback-form" role="status" aria-live="polite" hidden></div>
+                </form>
+              </section>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="view-comunidade" data-view="comunidade" hidden>
+          <div class="view-head">
+            <h1>Comunidade</h1>
+            <p>Um retrato dos relatos feitos neste navegador e orientações para se preparar com os vizinhos.</p>
+          </div>
+          <div class="stack">
+            <dl class="kpis">
+              <div class="kpi"><dt class="kpi-top"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-users"/></svg> Relatos comunitários</dt><dd class="kpi-value" id="com-total">0</dd></div>
+              <div class="kpi"><dt class="kpi-top"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-clock"/></svg> Em aberto</dt><dd class="kpi-value" id="com-abertas">0</dd></div>
+            </dl>
+            <div class="two-col even">
+              <section class="card" aria-labelledby="t-com-tipos"><div class="card-head"><h2 id="t-com-tipos">Relatos por tipo</h2></div><div class="bar-list" id="com-tipos"></div></section>
+              <section class="card" aria-labelledby="t-com-bairros"><div class="card-head"><h2 id="t-com-bairros">Bairros com mais relatos</h2></div><ul class="list" id="com-bairros"></ul></section>
+            </div>
+            <div class="two-col even">
+              <section class="card" aria-labelledby="t-com-orient"><div class="card-head"><h2 id="t-com-orient">Como se preparar</h2></div><div class="tips" id="com-orientacoes"></div></section>
+              <section class="card" aria-labelledby="t-contatos"><div class="card-head"><h2 id="t-contatos">Contatos de emergência no Brasil</h2></div>
+                <div class="contacts">
+                  <div class="contact"><span>Defesa Civil</span><strong>199</strong></div>
+                  <div class="contact"><span>Corpo de Bombeiros</span><strong>193</strong></div>
+                  <div class="contact"><span>SAMU</span><strong>192</strong></div>
+                </div>
+                <p class="occ-note">Relatos feitos aqui não substituem o contato com os serviços de emergência.</p>
+              </section>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="view-configuracoes" data-view="configuracoes" hidden>
+          <div class="view-head">
+            <h1>Configurações</h1>
+            <p>Personalize o painel. As preferências ficam salvas apenas neste navegador.</p>
+          </div>
+          <div class="two-col even">
+            <section class="card" aria-labelledby="t-cfg">
+              <div class="card-head"><h2 id="t-cfg">Preferências</h2></div>
+              <form id="form-config" novalidate>
+                <div class="stack">
+                  <div class="field"><label for="cfg-nome">Seu nome (usado na saudação)</label><input type="text" id="cfg-nome" autocomplete="given-name" maxlength="70" aria-describedby="erro-cfg-nome"><p class="erro-campo" id="erro-cfg-nome"></p></div>
+                  <div class="field"><label for="cfg-cidade">Localização padrão</label><select id="cfg-cidade"><option value="">Todas as cidades</option></select></div>
+                  <fieldset class="field-group"><legend class="hint">Bairros que você acompanha (notificações e alertas recentes). Sem seleção, todos são acompanhados.</legend>
+                  <div class="check-list" id="cfg-bairros"></div></fieldset>
+                </div>
+                <div class="btn-row"><button type="submit" class="btn btn-primary">Salvar preferências</button></div>
+              </form>
+            </section>
+            <section class="card" aria-labelledby="t-dados">
+              <div class="card-head"><h2 id="t-dados">Dados locais</h2></div>
+              <p class="muted">Relatos, alertas e preferências ficam no LocalStorage deste navegador. Não há servidor nem conta de usuário.</p>
+              <div class="btn-row">
+                <button type="button" class="btn btn-secondary" id="cfg-demo">Restaurar dados de demonstração</button>
+                <button type="button" class="btn btn-secondary" id="cfg-limpar">Apagar todos os dados locais</button>
+              </div>
+              <div class="feedback feedback-erro" id="cfg-limpar-confirma" hidden>
+                <p>Isso apaga relatos, alertas, preferências e inscrições deste navegador. Deseja continuar?</p>
+                <div class="btn-row"><button type="button" class="btn btn-danger btn-sm" id="cfg-limpar-sim">Sim, apagar tudo</button><button type="button" class="btn btn-secondary btn-sm" id="cfg-limpar-nao">Cancelar</button></div>
+              </div>
+            </section>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <nav class="tabbar" aria-label="Atalhos">
+    <a href="#visao-geral" data-nav="visao-geral"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-home"/></svg><span>Início</span></a>
+    <a href="#mapa" data-nav="mapa"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-map"/></svg><span>Mapa</span></a>
+    <a href="#ocorrencias" data-nav="ocorrencias"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-alert"/></svg><span>Relatos</span></a>
+    <a href="#alertas" data-nav="alertas"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-bell"/></svg><span>Alertas</span></a>
+    <button type="button" id="tab-menu" aria-label="Abrir menu completo"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-menu"/></svg><span>Menu</span></button>
+  </nav>
+
+  <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+</body>
+</html>
