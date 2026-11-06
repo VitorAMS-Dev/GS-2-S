@@ -1,7 +1,8 @@
 /* ==========================================================================
    AlertaBairro — aplicativo (solucao.html)
-   Painel com navegação por hash, mapa Leaflet, relatos comunitários, alertas
-   simulados e configurações. Depende de js/main.js (namespace AB) e do Leaflet.
+   Telas "Onde estou" (localização e risco) e "Rota de fuga" (destino seguro e rota em linha reta),
+   navegação por hash, mapa próprio (js/mapa.js) e mapas incorporados (Google Maps), relatos, alertas
+   simulados e configurações. Depende de js/main.js (namespace AB) e js/mapa.js. Sem biblioteca de mapas.
    Tudo é DEMONSTRATIVO: dados simulados, armazenamento no navegador (LocalStorage),
    nenhum envio real de SMS, WhatsApp, e-mail ou push.
    ========================================================================== */
@@ -9,11 +10,12 @@
 
 (function () {
   if (!window.AB || !document.getElementById("app-root")) return;
-  const { BAIRROS, STORAGE, $, $$, criarElemento: el, formatarNumero: fmt, normalizarTexto, lerJSON, salvarJSON } = window.AB;
+  const { BAIRROS, LOCAIS_COBERTOS, STORAGE, $, $$, criarElemento: el, formatarNumero: fmt, normalizarTexto, lerJSON, salvarJSON } = window.AB;
 
   /* ---------- 1. Constantes ---------------------------------------------- */
   const VIEWS = {
-    "visao-geral": "Visão geral",
+    "onde-estou": "Onde estou",
+    "fuga": "Rota de fuga",
     "monitoramento": "Monitoramento",
     "mapa": "Mapa inteligente",
     "ocorrencias": "Ocorrências",
@@ -29,36 +31,48 @@
   const STATUS = { aguardando: "Aguardando verificação", acompanhamento: "Em acompanhamento", resolvida: "Resolvida (segundo o relator)" };
   const NIVEIS_ALERTA = { informativo: "Informativo", atencao: "Atenção", elevado: "Risco elevado" };
   const RISCO_PARA_NIVEL = { Baixo: "informativo", Moderado: "atencao", Alto: "elevado" };
-  const RAIO_BAIRRO_M = { Baixo: 900, Moderado: 1200, Alto: 1500 };
-  const DISTANCIA_MAX_KM = 8;
+  const DISTANCIA_MAX_KM = 8;   // até esta distância de um bairro monitorado, o usuário é considerado "dentro" dele
+  const DESTINO_MAX_KM = 40;    // destinos de fuga só são sugeridos até esta distância do usuário
+  const LOCAL_ORIGEM = { gps: "Localização por GPS", bairro: "Bairro escolhido na lista", mapa: "Ponto marcado no mapa" };
+  const RAIO_BAIRRO_M = { Baixo: 900, Moderado: 1200, Alto: 1500 }; // raio da área desenhada em volta de cada bairro
   const ICONES_TIPO = { alagamento: "droplet", enchente: "cloud-rain", deslizamento: "alert", via_interditada: "pin", acumulo_agua: "droplet", outros: "info" };
 
-  const TILES = {
-    padrao: { url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png", attr: "&copy; colaboradores do OpenStreetMap", max: 19 },
-    satelite: { url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", attr: "Imagens &copy; Esri, Maxar, Earthstar Geographics e comunidade GIS", max: 18 }
+  // Modos "google" e "satelite": mapas incorporados por <iframe> (só um link). O modo "mapa" é o mapa próprio (js/mapa.js).
+  // LARGURA_REF/ALTURA_REF são o tamanho de referência do quadro, usados para calcular o recorte do OpenStreetMap.
+  const LARGURA_REF = 640, ALTURA_REF = 380;
+  const googleEmbed = (f, tipo) => {
+    const base = `https://www.google.com/maps?hl=pt-BR&t=${tipo}&z=${f.zoom}&output=embed`;
+    if (f.consulta) return `${base}&q=${encodeURIComponent(f.consulta)}`; // pesquisa por nome: o Google contorna a área do bairro/cidade
+    return f.pino ? `${base}&q=${f.lat},${f.lng}` : `${base}&ll=${f.lat},${f.lng}`;
+  };
+  const PROVEDORES = {
+    google: { rotulo: "Google Maps", embed: (f) => googleEmbed(f, "m") },
+    satelite: { rotulo: "Satélite (Google)", embed: (f) => googleEmbed(f, "k") }
   };
 
   /* ---------- 2. Estado --------------------------------------------------- */
   const state = {
-    view: "visao-geral",
+    view: "onde-estou",
+    local: null, // { lat, lng, origem: gps | bairro | mapa, precisao, bairroId, quando }: onde o usuário está
+    fuga: { destino: "" }, // chave do destino escolhido ("bairro-7", "coberto-3"); vazio = o recomendado
     cidade: "",
     bairros: BAIRROS.map((b) => Object.assign({}, b)),
     ocorrencias: [],
     alertas: [],
     config: { nome: "", cidade: "", acompanhados: [] },
-    base: "padrao",
+    base: "mapa", // mapa | google | satelite
+    foco: { tipo: "geral", n: 0, mover: true }, // o que o mapa mostra: geral | bairro | ocorrencia | rascunho
     camadas: { bairros: true, ocorrencias: true },
     pick: false,
-    rascunho: null, // { lat, lng } marcado no mapa para o relato
+    rascunho: null, // { lat, lng } informado pelo usuário para o relato
     bairroSelecionado: null,
     filtroMon: { busca: "", risco: "" },
     filtroOcc: { bairro: "", tipo: "" },
     alertaBairro: ""
   };
-  let mapa = null, tileAtual = null, camadaBairros = null, camadaOcc = null, marcadorRascunho = null;
-  const marcadores = { bairro: new Map(), ocorrencia: new Map() };
-  let avisouTiles = false;
-  let mapaAjustado = false;
+
+  let mapaProp = null, mapaLocal = null, mapaFuga = null, contFoco = 0, ultimaChave = "";
+  const seletoresLocal = [];
 
   /* ---------- 3. Utilitários --------------------------------------------- */
   const uid = (p) => `${p}-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`;
@@ -197,12 +211,17 @@
       state.config = { nome: String(cfg.nome || ""), cidade: String(cfg.cidade || ""), acompanhados: Array.isArray(cfg.acompanhados) ? cfg.acompanhados.map(Number) : [] };
     }
     state.cidade = state.config.cidade;
+    const loc = lerJSON(STORAGE.local, null);
+    if (loc && Number.isFinite(loc.lat) && Number.isFinite(loc.lng) && Math.abs(loc.lat) <= 90 && Math.abs(loc.lng) <= 180) {
+      state.local = { lat: loc.lat, lng: loc.lng, origem: LOCAL_ORIGEM[loc.origem] ? loc.origem : "mapa", precisao: Number(loc.precisao) || null, bairroId: Number(loc.bairroId) || null, quando: String(loc.quando || "") };
+    }
   }
 
   /* ---------- 6. Roteamento ---------------------------------------------- */
   function viewDoHash() {
     const nome = location.hash.replace("#", "");
-    return VIEWS[nome] ? nome : "visao-geral";
+    if (nome === "visao-geral") return "onde-estou"; // endereço antigo
+    return VIEWS[nome] ? nome : "onde-estou";
   }
 
   function irPara(view) {
@@ -222,6 +241,9 @@
     fecharSidebar();
     fecharNotificacoes();
     posicionarMapa();
+    $("#btn-sos").hidden = state.view === "fuga"; // já está na tela de fuga
+    if (state.view === "onde-estou") renderMapaLocal(true);
+    if (state.view === "fuga") renderFuga(true);
     if (foco) {
       const titulo = $(`#view-${state.view} .view-head`);
       if (titulo) { titulo.setAttribute("tabindex", "-1"); titulo.focus({ preventScroll: true }); }
@@ -267,6 +289,7 @@
       if (e.key !== "Escape") return;
       if (!$("#painel-notificacoes").hidden) { fecharNotificacoes(); $("#btn-notificacoes").focus(); }
       if ($("#sidebar").classList.contains("aberto")) { fecharSidebar(); $("#btn-menu").focus(); }
+      if ($("#occ-picker") && !$("#occ-picker").hidden) fecharSeletorLocal();
       if (state.pick) cancelarSelecaoNoMapa(true);
       $("#busca-resultados").hidden = true;
     });
@@ -327,8 +350,8 @@
     toast("Todos os alertas foram marcados como lidos.", "sucesso");
   }
 
-  /* ---------- 8. Mapa ----------------------------------------------------- */
-  function popupBairro(b) {
+  /* ---------- 8. Mapa (incorporado por iframe) --------------------------- */
+  function detalhesBairro(b) {
     const box = el("div", "popup-box");
     box.append(el("span", `badge badge-${classe(b.risco)}`, `Risco ${b.risco}`), el("h3", "", b.nome), el("p", "muted", b.cidade));
     box.append(el("p", "", `Chuva simulada: ${fmt(b.chuva)} mm. Temperatura simulada: ${fmt(b.temperatura)} °C.`), el("p", "", b.orientacao));
@@ -340,7 +363,7 @@
     return box;
   }
 
-  function popupOcorrencia(o) {
+  function detalhesOcorrencia(o) {
     const b = bairroPorId(o.bairroId);
     const box = el("div", "popup-box");
     box.append(el("span", `badge badge-${o.gravidade === "alta" ? "alto" : o.gravidade === "media" ? "moderado" : "baixo"}`, `Gravidade ${GRAVIDADES[o.gravidade].toLowerCase()}`));
@@ -349,120 +372,245 @@
     return box;
   }
 
+  // Quadro que cobre todos os bairros visíveis (ou a cidade escolhida), sem pino.
+  function focoGeral() {
+    const pts = bairrosVisiveis();
+    if (!pts.length) return { tipo: "geral", lat: -14.235, lng: -51.925, zoom: 4, pino: false, rotulo: "Brasil" };
+    const lats = pts.map((b) => b.lat), lngs = pts.map((b) => b.lng);
+    const minLat = Math.min(...lats), maxLat = Math.max(...lats), minLng = Math.min(...lngs), maxLng = Math.max(...lngs);
+    const lat = (minLat + maxLat) / 2, lng = (minLng + maxLng) / 2;
+    const margem = 1.6;
+    const spanLng = Math.max(maxLng - minLng, 0.01) * margem;
+    const spanLat = Math.max(maxLat - minLat, 0.01) * margem;
+    const zLng = Math.log2((360 * LARGURA_REF) / (256 * spanLng));
+    const zLat = Math.log2((360 * ALTURA_REF * Math.cos((lat * Math.PI) / 180)) / (256 * spanLat));
+    const zoom = Math.max(3, Math.min(13, Math.floor(Math.min(zLng, zLat))));
+    return { tipo: "geral", lat: Number(lat.toFixed(6)), lng: Number(lng.toFixed(6)), zoom, pino: false, rotulo: state.cidade || "Todas as cidades", consulta: state.cidade ? `${state.cidade}, Brasil` : "" };
+  }
+
+  function resolverFoco() {
+    const f = state.foco;
+    const arred = (n) => Number(Number(n).toFixed(6));
+    if (f.tipo === "bairro") {
+      const b = bairroPorId(f.id);
+      if (b) return { tipo: "bairro", lat: b.lat, lng: b.lng, zoom: 14, pino: true, rotulo: b.nome, consulta: `${b.nome}, ${b.cidade}, Brasil` };
+    } else if (f.tipo === "ocorrencia") {
+      const o = state.ocorrencias.find((x) => x.id === f.id);
+      if (o) return { tipo: "ocorrencia", lat: arred(o.lat), lng: arred(o.lng), zoom: 16, pino: true, rotulo: `${TIPOS[o.tipo]} (relato comunitário)` };
+    } else if (f.tipo === "rascunho" && state.rascunho) {
+      return { tipo: "rascunho", lat: arred(state.rascunho.lat), lng: arred(state.rascunho.lng), zoom: 16, pino: true, rotulo: "Local informado para o relato" };
+    }
+    return focoGeral();
+  }
+
+  function marcarBaseAtiva() {
+    $$("#base-seg button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.base === state.base)));
+  }
+
+  function definirFoco(foco) {
+    state.foco = Object.assign({ n: ++contFoco, mover: true }, foco);
+  }
+
   function iniciarMapa() {
-    const container = $("#mapa");
-    if (typeof L === "undefined") {
-      container.replaceChildren(el("p", "map-fallback", "Não foi possível carregar o mapa. Verifique se a pasta lib/leaflet existe e recarregue a página."));
+    if (!window.MapaProprio) { // js/mapa.js não carregou: usa só os mapas incorporados
+      state.base = "google";
+      const bt = $('#base-seg button[data-base="mapa"]');
+      if (bt) bt.hidden = true;
       return;
     }
-    mapa = L.map(container, { zoomControl: true, minZoom: 3, worldCopyJump: false });
-    camadaBairros = L.layerGroup();
-    camadaOcc = L.layerGroup();
-    trocarBase(state.base);
-    mapa.on("click", (e) => { if (state.pick) definirLocalNoMapa(e.latlng); });
-    ajustarMapa();
-    renderMapa();
+    mapaProp = window.MapaProprio.criar($("#mapa-proprio"), {
+      aoClicar: (ponto) => { if (state.pick) definirLocalNoMapa(ponto); },
+      aoErroTiles: () => toast("Não foi possível carregar as imagens do mapa de fundo. Confira a conexão: áreas e marcadores continuam visíveis.", "erro")
+    });
   }
 
   function trocarBase(tipo) {
+    if (tipo === "mapa" ? !mapaProp : !PROVEDORES[tipo]) return;
+    if (state.pick && tipo !== "mapa") cancelarSelecaoNoMapa(false);
     state.base = tipo;
-    if (mapa) {
-      if (tileAtual) mapa.removeLayer(tileAtual);
-      const t = TILES[tipo];
-      tileAtual = L.tileLayer(t.url, { attribution: t.attr, maxZoom: t.max });
-      tileAtual.on("tileerror", () => {
-        if (!avisouTiles) { avisouTiles = true; toast("Não foi possível carregar o mapa de fundo. Verifique sua conexão.", "erro"); }
+    marcarBaseAtiva();
+    renderMapa();
+  }
+
+  // Mapa próprio: áreas coloridas por risco, marcadores de bairros e relatos, e o local marcado no relato.
+  function renderMapaProprio(f) {
+    const areas = [], pinos = [];
+    if (state.camadas.bairros) {
+      bairrosVisiveis().forEach((b) => {
+        areas.push({ lat: b.lat, lng: b.lng, raioM: RAIO_BAIRRO_M[b.risco], classe: classe(b.risco) });
+        pinos.push({
+          lat: b.lat, lng: b.lng, classe: `pin ${classe(b.risco)}`, rotulo: `${b.nome}, risco ${b.risco}`,
+          ativo: f.tipo === "bairro" && state.foco.id === b.id, aoClicar: () => selecionarBairroNoMapa(b.id, false)
+        });
       });
-      tileAtual.addTo(mapa);
-      tileAtual.bringToBack();
     }
-    $$("#base-seg button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.base === tipo)));
+    if (state.camadas.ocorrencias) {
+      ocorrenciasVisiveis().forEach((o) => {
+        pinos.push({
+          lat: o.lat, lng: o.lng, classe: `pin-occ ${o.gravidade}`, rotulo: `${TIPOS[o.tipo]} (relato comunitário não verificado)`,
+          ativo: f.tipo === "ocorrencia" && state.foco.id === o.id, aoClicar: () => selecionarOcorrenciaNoMapa(o.id, false)
+        });
+      });
+    }
+    if (state.rascunho) pinos.push({ lat: state.rascunho.lat, lng: state.rascunho.lng, classe: "pin-draft", rotulo: "Local informado para o relato", ativo: false, aoClicar: null });
+    mapaProp.setCamadas(areas, pinos);
+
+    // Só move a vista quando o foco muda (não a cada redesenho), para não desfazer o que o usuário arrastou.
+    const chave = `${state.foco.n}|${state.view}|${state.cidade}`;
+    if (chave !== ultimaChave) {
+      ultimaChave = chave;
+      if (state.foco.mover !== false) {
+        if (f.tipo === "geral") {
+          const pts = bairrosVisiveis().map((b) => ({ lat: b.lat, lng: b.lng }));
+          if (pts.length) mapaProp.ajustar(pts); else mapaProp.irPara(f.lat, f.lng, f.zoom);
+        } else {
+          mapaProp.irPara(f.lat, f.lng, f.zoom);
+        }
+      }
+    }
   }
 
   function renderMapa() {
-    if (!mapa) return;
-    camadaBairros.clearLayers(); camadaOcc.clearLayers();
-    marcadores.bairro.clear(); marcadores.ocorrencia.clear();
-    const cores = { Baixo: "#2fa36b", Moderado: "#f2b230", Alto: "#d6453d" };
-    bairrosVisiveis().forEach((b) => {
-      const area = L.circle([b.lat, b.lng], { radius: RAIO_BAIRRO_M[b.risco], color: cores[b.risco], fillColor: cores[b.risco], fillOpacity: 0.28, weight: 2, interactive: false });
-      const icon = L.divIcon({ className: "", html: `<div class="pin ${classe(b.risco)}"></div>`, iconSize: [22, 22], iconAnchor: [11, 11] });
-      const m = L.marker([b.lat, b.lng], { icon, title: `${b.nome}, risco ${b.risco}`, alt: `${b.nome}, risco ${b.risco}`, keyboard: true });
-      m.bindPopup(() => popupBairro(b));
-      m.on("click", () => { state.bairroSelecionado = b.id; renderPainelBairro(); });
-      camadaBairros.addLayer(area); camadaBairros.addLayer(m);
-      marcadores.bairro.set(b.id, m);
-    });
-    ocorrenciasVisiveis().forEach((o) => {
-      const icon = L.divIcon({ className: "", html: `<div class="pin-occ ${o.gravidade}"></div>`, iconSize: [16, 16], iconAnchor: [8, 8] });
-      const m = L.marker([o.lat, o.lng], { icon, title: `${TIPOS[o.tipo]} (relato comunitário)`, alt: `${TIPOS[o.tipo]}, relato comunitário não verificado`, keyboard: true });
-      m.bindPopup(() => popupOcorrencia(o));
-      camadaOcc.addLayer(m);
-      marcadores.ocorrencia.set(o.id, m);
-    });
-    aplicarCamadas();
+    const card = $("#map-card");
+    if (!card || card.hidden) return; // cartão oculto: nada é carregado até aparecer
+    const propria = state.base === "mapa" && !!mapaProp;
+    const quadro = $("#mapa");
+    $("#mapa-proprio").hidden = !propria;
+    quadro.hidden = propria;
+    $("#map-camadas").hidden = !propria;
+    const f = resolverFoco();
+    if (propria) {
+      renderMapaProprio(f);
+    } else {
+      const prov = PROVEDORES[state.base];
+      const url = prov.embed(f);
+      if (quadro.dataset.url !== url) { quadro.src = url; quadro.dataset.url = url; } // evita recarregar sem necessidade
+      quadro.title = `Mapa ${prov.rotulo} mostrando ${f.rotulo}`;
+    }
+    $("#link-google").href = f.consulta ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(f.consulta)}` : f.pino ? `https://www.google.com/maps/search/?api=1&query=${f.lat},${f.lng}` : `https://www.google.com/maps/@${f.lat},${f.lng},${f.zoom}z`;
+    $("#link-osm").href = f.consulta ? `https://www.openstreetmap.org/search?query=${encodeURIComponent(f.consulta)}` : f.pino ? `https://www.openstreetmap.org/?mlat=${f.lat}&mlon=${f.lng}#map=${f.zoom}/${f.lat}/${f.lng}` : `https://www.openstreetmap.org/#map=${f.zoom}/${f.lat}/${f.lng}`;
+    renderChipsMapa(f);
+    renderRelatosMapa(f);
+    renderInfoMapa(f);
   }
 
-  function aplicarCamadas() {
-    if (!mapa) return;
-    [[camadaBairros, state.camadas.bairros], [camadaOcc, state.camadas.ocorrencias]].forEach(([camada, ativa]) => {
-      if (ativa && !mapa.hasLayer(camada)) camada.addTo(mapa);
-      if (!ativa && mapa.hasLayer(camada)) mapa.removeLayer(camada);
+  // Botão da lista sob o mapa. A lista é redesenhada a cada clique, então o foco volta ao mesmo botão.
+  function adicionarChip(lista, rotulo, ativo, aoClicar, marca, rotuloAria) {
+    const indice = lista.children.length;
+    const li = el("li");
+    const b = el("button", "chip-bairro");
+    b.type = "button";
+    b.setAttribute("aria-pressed", String(ativo));
+    if (marca) b.append(el("span", `sw ${marca}`));
+    b.append(document.createTextNode(rotulo));
+    if (rotuloAria) b.setAttribute("aria-label", rotuloAria);
+    b.addEventListener("click", () => {
+      aoClicar();
+      const alvo = lista.children[indice] && lista.children[indice].querySelector("button");
+      if (alvo) alvo.focus();
     });
+    li.append(b); lista.append(li);
+  }
+
+  // Riscos: um botão por bairro (mais críticos primeiro). A cor do ponto indica o nível de risco.
+  function renderChipsMapa(f) {
+    const lista = $("#mapa-chips");
+    lista.replaceChildren();
+    adicionarChip(lista, "Visão geral", f.tipo === "geral", ajustarMapa);
+    const ordem = { Alto: 0, Moderado: 1, Baixo: 2 };
+    bairrosVisiveis().slice().sort((x, y) => ordem[x.risco] - ordem[y.risco] || x.nome.localeCompare(y.nome, "pt-BR")).forEach((b) => {
+      adicionarChip(lista, b.nome, f.tipo === "bairro" && state.foco.id === b.id, () => selecionarBairroNoMapa(b.id), classe(b.risco), `${b.nome}, risco ${b.risco}`);
+    });
+  }
+
+  // O que está acontecendo: relatos comunitários recentes (losango colorido pela gravidade).
+  function renderRelatosMapa(f) {
+    const lista = $("#mapa-relatos");
+    lista.replaceChildren();
+    const recentes = ocorrenciasVisiveis().slice().sort((x, y) => new Date(y.data) - new Date(x.data)).slice(0, 12);
+    $("#mapa-relatos-vazio").hidden = recentes.length > 0;
+    recentes.forEach((o) => {
+      const b = bairroPorId(o.bairroId);
+      const quando = tempoRelativo(o.data);
+      adicionarChip(lista, `${TIPOS[o.tipo]}${b ? ` em ${b.nome}` : ""}${quando ? `, ${quando}` : ""}`,
+        f.tipo === "ocorrencia" && state.foco.id === o.id, () => selecionarOcorrenciaNoMapa(o.id), `diamond ${o.gravidade}`,
+        `${TIPOS[o.tipo]}${b ? ` em ${b.nome}` : ""}, gravidade ${GRAVIDADES[o.gravidade].toLowerCase()}, relato não verificado`);
+    });
+  }
+
+  // Texto sob o mapa: substitui os popups dos marcadores.
+  function renderInfoMapa(f) {
+    const info = $("#mapa-info");
+    info.replaceChildren();
+    const coord = (lat, lng) => el("p", "muted", `Coordenadas aproximadas: ${Number(lat).toFixed(4)}, ${Number(lng).toFixed(4)}`);
+    if (f.tipo === "bairro") {
+      const b = bairroPorId(state.foco.id);
+      if (state.view === "mapa") { // o painel ao lado já traz os detalhes
+        const linha = el("p", "map-info-linha");
+        linha.append(el("span", `badge badge-${classe(b.risco)}`, `Risco ${b.risco}`), document.createTextNode(` ${b.nome}, ${b.cidade}`));
+        info.append(linha, coord(b.lat, b.lng));
+      } else {
+        info.append(detalhesBairro(b), coord(b.lat, b.lng));
+      }
+      info.append(el("p", "muted", state.base === "mapa"
+        ? "A área colorida é uma região aproximada em torno do bairro, na cor do nível de risco (dado demonstrativo)."
+        : "O contorno tracejado é a área do bairro, desenhada pelo Google Maps."));
+    } else if (f.tipo === "ocorrencia") {
+      const o = state.ocorrencias.find((x) => x.id === state.foco.id);
+      info.append(detalhesOcorrencia(o), coord(o.lat, o.lng));
+    } else if (f.tipo === "rascunho") {
+      info.append(el("p", "", "Este é o local informado para o seu relato. Ele só será salvo ao registrar a ocorrência."), coord(f.lat, f.lng));
+    } else {
+      const vis = bairrosVisiveis();
+      const altos = vis.filter((b) => b.risco === "Alto").length, mods = vis.filter((b) => b.risco === "Moderado").length;
+      const nOcc = ocorrenciasVisiveis().length;
+      info.append(el("p", "map-info-linha", `${f.rotulo}: ${altos} bairro${altos === 1 ? "" : "s"} com risco alto, ${mods} com risco moderado e ${nOcc} relato${nOcc === 1 ? "" : "s"} comunitário${nOcc === 1 ? "" : "s"} (não verificados).`),
+        el("p", "muted", "Escolha um bairro ou um relato abaixo para ver o local no mapa."));
+    }
   }
 
   function ajustarMapa() {
-    if (!mapa) return;
-    const pontos = bairrosVisiveis().map((b) => [b.lat, b.lng]);
-    if (!pontos.length) return;
-    mapa.fitBounds(L.latLngBounds(pontos), { padding: [40, 40], maxZoom: state.cidade ? 12 : 5, animate: false });
+    definirFoco({ tipo: "geral" });
+    state.bairroSelecionado = null; // o painel acompanha o que o mapa mostra
+    renderMapa();
+    renderPainelBairro();
   }
 
-  // O mesmo cartão de mapa é movido entre "Visão geral" e "Mapa inteligente".
+  function selecionarBairroNoMapa(id, mover = true) {
+    state.bairroSelecionado = id;
+    definirFoco({ tipo: "bairro", id, mover });
+    renderMapa();
+    renderPainelBairro();
+  }
+
+  // O cartão do mapa inteligente só aparece na tela "Mapa inteligente".
   function posicionarMapa() {
     const card = $("#map-card");
     if (!card) return;
-    const destino = state.view === "mapa" ? $("#slot-mapa-grande") : state.view === "visao-geral" ? $("#slot-mapa-geral") : null;
-    if (destino && card.parentElement !== destino) destino.append(card);
+    const destino = state.view === "mapa" ? $("#slot-mapa-grande") : null;
     card.classList.toggle("is-full", state.view === "mapa");
     card.hidden = !destino;
-    if (mapa && destino) {
-      setTimeout(() => {
-        mapa.invalidateSize();
-        if (!mapaAjustado) { ajustarMapa(); mapaAjustado = true; }
-      }, 60);
-    }
+    renderMapa();
     renderPainelBairro();
   }
 
-  function focarBairro(id, abrirPopup = true) {
+  function focarBairro(id) {
     const b = bairroPorId(id);
     if (!b) return;
-    state.bairroSelecionado = b.id;
+    selecionarBairroNoMapa(b.id);
     irPara("mapa");
-    if (mapa) {
-      setTimeout(() => {
-        mapa.invalidateSize();
-        mapa.flyTo([b.lat, b.lng], 14, { duration: 0.8 });
-        const m = marcadores.bairro.get(b.id);
-        if (m && abrirPopup) m.openPopup();
-      }, 80);
-    }
-    renderPainelBairro();
+  }
+
+  function selecionarOcorrenciaNoMapa(id, mover = true) {
+    definirFoco({ tipo: "ocorrencia", id, mover });
+    renderMapa();
   }
 
   function focarOcorrencia(id) {
     const o = state.ocorrencias.find((x) => x.id === id);
     if (!o) return;
+    selecionarOcorrenciaNoMapa(o.id);
     irPara("mapa");
-    if (mapa) {
-      setTimeout(() => {
-        mapa.invalidateSize();
-        mapa.flyTo([o.lat, o.lng], 15, { duration: 0.8 });
-        const m = marcadores.ocorrencia.get(id);
-        if (m) m.openPopup();
-      }, 80);
-    }
   }
 
   function renderPainelBairro() {
@@ -471,7 +619,7 @@
     painel.replaceChildren();
     const b = bairroPorId(state.bairroSelecionado);
     if (!b) {
-      painel.append(el("h2", "", "Bairro selecionado"), el("p", "muted", "Clique em um marcador do mapa ou use a busca para ver os detalhes do bairro."));
+      painel.append(el("h2", "", "Bairro selecionado"), el("p", "muted", "Escolha um bairro na lista abaixo do mapa ou use a busca para ver os detalhes do bairro."));
       return;
     }
     const cls = classe(b.risco);
@@ -489,40 +637,116 @@
 
   function iniciarControlesMapa() {
     $$("#base-seg button").forEach((b) => b.addEventListener("click", () => trocarBase(b.dataset.base)));
-    $("#camada-bairros").addEventListener("change", (e) => { state.camadas.bairros = e.target.checked; aplicarCamadas(); });
-    $("#camada-ocorrencias").addEventListener("change", (e) => { state.camadas.ocorrencias = e.target.checked; aplicarCamadas(); });
+    marcarBaseAtiva();
+    $("#camada-bairros").addEventListener("change", (e) => { state.camadas.bairros = e.target.checked; renderMapa(); });
+    $("#camada-ocorrencias").addEventListener("change", (e) => { state.camadas.ocorrencias = e.target.checked; renderMapa(); });
     $("#pick-cancelar").addEventListener("click", () => cancelarSelecaoNoMapa(true));
+
+    const campo = $("#occ-link");
+    $("#occ-link-aplicar").addEventListener("click", aplicarLocalInformado);
+    $("#occ-link-cancelar").addEventListener("click", () => fecharSeletorLocal());
+    campo.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); aplicarLocalInformado(); } }); // Enter não envia o formulário do relato
+    campo.addEventListener("input", () => { campo.setAttribute("aria-invalid", "false"); $("#erro-occ-link").textContent = ""; });
   }
 
-  /* ---------- 9. Seleção de local no mapa (relatos) ---------------------- */
+  /* ---------- 9. Local do relato (link do mapa ou coordenadas) ----------- */
+  const NUM = "(-?\\d{1,3}(?:\\.\\d+)?)";
+
+  // Aceita links do Google Maps e do OpenStreetMap, ou coordenadas digitadas ("-23.5670, -46.6920").
+  function extrairCoordenadas(entrada) {
+    let t = String(entrada || "").trim();
+    if (!t) return null;
+    try { t = decodeURIComponent(t); } catch (e) { /* mantém o texto original */ }
+    if (/^-?\d+,\d+\s+-?\d+,\d+$/.test(t)) t = t.replace(/,/g, "."); // "-23,567 -46,692"
+    const padroes = [
+      new RegExp(`!3d${NUM}!4d${NUM}`),                                                   // Google: ponto marcado
+      new RegExp(`[?&](?:q|query|ll|center|destination)=(?:loc:)?${NUM}\\s*,\\s*${NUM}`), // Google: parâmetros
+      new RegExp(`mlat=${NUM}&(?:amp;)?mlon=${NUM}`),                                     // OpenStreetMap: marcador
+      new RegExp(`#map=\\d+/${NUM}/${NUM}`),                                              // OpenStreetMap: centro da visão
+      new RegExp(`@${NUM},${NUM}`),                                                       // Google: centro da visão
+      new RegExp(`^${NUM}\\s*[,;\\s]\\s*${NUM}$`)                                         // "lat, lng"
+    ];
+    for (const padrao of padroes) {
+      const m = t.match(padrao);
+      if (!m) continue;
+      const lat = Number(m[1]), lng = Number(m[2]);
+      if (Math.abs(lat) <= 90 && Math.abs(lng) <= 180) return { lat, lng };
+    }
+    return null;
+  }
+
+  function abrirSeletorLocal() {
+    const ref = bairroPorId($("#occ-bairro").value) || bairrosVisiveis()[0];
+    if (ref) { // links para o usuário achar o ponto, já centrados no bairro escolhido
+      $("#occ-abrir-google").href = `https://www.google.com/maps/search/?api=1&query=${ref.lat},${ref.lng}`;
+      $("#occ-abrir-osm").href = `https://www.openstreetmap.org/?mlat=${ref.lat}&mlon=${ref.lng}#map=16/${ref.lat}/${ref.lng}`;
+    }
+    $("#occ-picker").hidden = false;
+    $("#occ-link").focus();
+  }
+
+  function fecharSeletorLocal() {
+    $("#occ-picker").hidden = true;
+    $("#occ-link").value = "";
+    $("#occ-link").setAttribute("aria-invalid", "false");
+    $("#erro-occ-link").textContent = "";
+  }
+
+  function aplicarLocalInformado() {
+    const campo = $("#occ-link"), valor = campo.value;
+    const falhar = (msg) => { campo.setAttribute("aria-invalid", "true"); $("#erro-occ-link").textContent = msg; campo.focus(); };
+    if (/maps\.app\.goo\.gl|goo\.gl\/maps/i.test(valor)) {
+      falhar("Links curtos não trazem as coordenadas. Abra o link, copie o endereço completo da barra do navegador e cole aqui.");
+      return;
+    }
+    const ponto = extrairCoordenadas(valor);
+    if (!ponto) {
+      falhar("Não encontrei coordenadas. Cole o link completo do Google Maps ou do OpenStreetMap, ou digite no formato -23.5670, -46.6920.");
+      return;
+    }
+    state.rascunho = ponto;
+    fecharSeletorLocal();
+    renderLocalRelato();
+    renderMapa();
+    toast("Local do relato definido.", "sucesso");
+  }
+
   function iniciarSelecaoNoMapa() {
-    if (!mapa) { toast("O mapa não está disponível. Use a localização do bairro.", "erro"); return; }
+    if (!mapaProp) { toast("O mapa próprio não está disponível. Informe o local por link ou coordenadas.", "erro"); return; }
     state.pick = true;
+    if (state.base !== "mapa") trocarBase("mapa");
     $("#pick-banner").hidden = false;
-    $("#mapa").style.cursor = "crosshair";
+    $("#mapa-proprio").classList.add("selecionando");
     irPara("mapa");
   }
 
   function cancelarSelecaoNoMapa(voltar) {
     state.pick = false;
     $("#pick-banner").hidden = true;
-    if ($("#mapa")) $("#mapa").style.cursor = "";
+    $("#mapa-proprio").classList.remove("selecionando");
     if (voltar) irPara("ocorrencias");
   }
 
-  function definirLocalNoMapa(latlng) {
-    state.rascunho = { lat: latlng.lat, lng: latlng.lng };
-    if (marcadorRascunho) mapa.removeLayer(marcadorRascunho);
-    marcadorRascunho = L.marker(latlng, { icon: L.divIcon({ className: "", html: '<div class="pin-draft"></div>', iconSize: [18, 18], iconAnchor: [9, 9] }), interactive: false }).addTo(mapa);
+  function definirLocalNoMapa(ponto) {
+    state.rascunho = { lat: ponto.lat, lng: ponto.lng };
     cancelarSelecaoNoMapa(true);
     renderLocalRelato();
+    renderMapa();
     toast("Local marcado no mapa.", "sucesso");
+  }
+
+  function verRascunhoNoMapa() {
+    definirFoco({ tipo: "rascunho" });
+    renderMapa();
+    irPara("mapa");
   }
 
   function limparLocalRascunho() {
     state.rascunho = null;
-    if (marcadorRascunho && mapa) { mapa.removeLayer(marcadorRascunho); marcadorRascunho = null; }
+    if (state.foco.tipo === "rascunho") definirFoco({ tipo: "geral" });
+    fecharSeletorLocal();
     renderLocalRelato();
+    renderMapa();
   }
 
   function renderLocalRelato() {
@@ -530,62 +754,314 @@
     box.replaceChildren();
     box.append(icone("pin"));
     if (state.rascunho) {
-      box.append(el("span", "", `Local marcado no mapa: ${state.rascunho.lat.toFixed(4)}, ${state.rascunho.lng.toFixed(4)}`));
-      box.append(botao("Remover marcação", "btn-secondary btn-sm", limparLocalRascunho));
+      box.append(el("span", "", `Local informado: ${state.rascunho.lat.toFixed(4)}, ${state.rascunho.lng.toFixed(4)}`));
+      box.append(botao("Ver no mapa", "btn-secondary btn-sm", verRascunhoNoMapa, "map"));
+      box.append(botao("Marcar de novo no mapa", "btn-secondary btn-sm", iniciarSelecaoNoMapa));
+      box.append(botao("Link ou coordenadas", "btn-secondary btn-sm", abrirSeletorLocal));
+      box.append(botao("Remover", "btn-secondary btn-sm", limparLocalRascunho));
     } else {
-      box.append(el("span", "", "Sem marcação: será usada a localização aproximada do bairro."));
+      box.append(el("span", "", "Sem local informado: será usada a localização aproximada do bairro."));
+      box.append(botao("Marcar no mapa", "btn-secondary btn-sm", iniciarSelecaoNoMapa, "map"));
+      box.append(botao("Link ou coordenadas", "btn-secondary btn-sm", abrirSeletorLocal));
     }
-    box.append(botao("Marcar no mapa", "btn-secondary btn-sm", iniciarSelecaoNoMapa, "map"));
   }
 
-  /* ---------- 10. Visão geral e monitoramento ---------------------------- */
-  function saudacao() {
-    const h = new Date().getHours();
-    const periodo = h < 12 ? "Bom dia" : h < 18 ? "Boa tarde" : "Boa noite";
-    return state.config.nome ? `${periodo}, ${state.config.nome.split(/\s+/)[0]}` : periodo;
+  /* ---------- 10. Onde estou, rotas de fuga e monitoramento -------------- */
+  /* ---- 10.1 Cálculos: distância, direção e destinos ---- */
+  const RUMOS = ["norte", "nordeste", "leste", "sudeste", "sul", "sudoeste", "oeste", "noroeste"];
+
+  // Direção (rosa dos ventos) para ir do ponto a até o ponto b, em linha reta.
+  function rumo(a, b) {
+    const rad = (x) => (x * Math.PI) / 180;
+    const y = Math.sin(rad(b.lng - a.lng)) * Math.cos(rad(b.lat));
+    const x = Math.cos(rad(a.lat)) * Math.sin(rad(b.lat)) - Math.sin(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.cos(rad(b.lng - a.lng));
+    const graus = (((Math.atan2(y, x) * 180) / Math.PI) + 360) % 360;
+    return RUMOS[Math.round(graus / 45) % 8];
   }
 
-  function renderVisaoGeral() {
-    const lista = bairrosVisiveis();
-    const altos = lista.filter((b) => b.risco === "Alto").length;
-    const local = state.cidade || "todas as cidades";
-    $("#saudacao").textContent = saudacao();
-    $("#resumo-geral").textContent = `${altos} ${altos === 1 ? "bairro" : "bairros"} com risco alto no cenário simulado (${local}).`;
-    const total = lista.length;
-    const mediaT = total ? lista.reduce((s, b) => s + b.temperatura, 0) / total : 0;
-    const mediaC = total ? lista.reduce((s, b) => s + b.chuva, 0) / total : 0;
-    $("#kpi-total").textContent = String(total);
-    $("#kpi-alto").textContent = String(altos);
-    $("#kpi-chuva").textContent = `${fmt(mediaC)} mm`;
-    $("#kpi-temp").textContent = `${fmt(mediaT)} °C`;
-    $("#kpi-alto").closest(".kpi").classList.toggle("is-alert", altos > 0);
+  function formatarDist(km) {
+    return km < 1 ? `${Math.max(10, Math.round((km * 1000) / 10) * 10)} m` : `${fmt(km)} km`;
+  }
 
-    const atencao = $("#lista-atencao"); atencao.replaceChildren();
-    const ordenados = lista.slice().sort((a, b) => b.chuva - a.chuva).slice(0, 5);
-    if (!ordenados.length) atencao.append(el("li", "empty", "Nenhum bairro nesta localização."));
-    ordenados.forEach((b) => {
-      const li = el("li");
-      const item = el("button", `row-item nivel-${classe(b.risco)}`); item.type = "button";
-      const main = el("div", "row-main");
-      const t = el("div", "row-title"); t.append(el("span", "", b.nome), el("span", `badge badge-${classe(b.risco)}`, b.risco));
-      main.append(t, el("p", "row-sub", `${b.cidade}, ${fmt(b.chuva)} mm simulados`));
-      item.append(main, icone("pin"));
-      item.setAttribute("aria-label", `Ver ${b.nome} no mapa`);
-      item.addEventListener("click", () => focarBairro(b.id));
-      li.append(item); atencao.append(li);
+  // Bairro monitorado mais próximo da posição do usuário e se ele está "dentro" (até DISTANCIA_MAX_KM).
+  function situacaoAtual() {
+    if (!state.local || !state.bairros.length) return null;
+    let melhor = null;
+    state.bairros.forEach((b) => {
+      const km = distanciaKm(state.local, b);
+      if (!melhor || km < melhor.km) melhor = { bairro: b, km };
     });
+    return { bairro: melhor.bairro, km: melhor.km, dentro: melhor.km <= DISTANCIA_MAX_KM };
+  }
 
-    const ultimas = $("#lista-ultimas-ocorrencias"); ultimas.replaceChildren();
-    const recentes = ocorrenciasVisiveis().slice().sort((a, b) => new Date(b.data) - new Date(a.data)).slice(0, 3);
-    if (!recentes.length) ultimas.append(el("li", "empty", "Ainda não há relatos nesta localização."));
-    recentes.forEach((o) => ultimas.append(itemOcorrenciaResumo(o)));
+  // Destinos seguros: primeiro bairros sem risco (nível baixo), depois locais cobertos. Cada lista ordenada pela distância.
+  function calcularDestinos() {
+    const sit = situacaoAtual();
+    if (!sit) return null;
+    const origem = state.local;
+    const bairros = state.bairros
+      .filter((b) => b.risco === "Baixo" && !(sit.dentro && b.id === sit.bairro.id))
+      .map((b) => ({ chave: `bairro-${b.id}`, tipo: "bairro", nome: b.nome, cidade: b.cidade, lat: b.lat, lng: b.lng, km: distanciaKm(origem, b) }))
+      .filter((d) => d.km <= DESTINO_MAX_KM).sort((x, y) => x.km - y.km).slice(0, 3);
+    const cobertos = LOCAIS_COBERTOS
+      .map((c) => ({ chave: `coberto-${c.id}`, tipo: "coberto", nome: c.nome, cidade: c.cidade, lat: c.lat, lng: c.lng, km: distanciaKm(origem, c), dado: c }))
+      .filter((d) => d.km <= DESTINO_MAX_KM).sort((x, y) => x.km - y.km).slice(0, 3);
+    return { sit, bairros, cobertos, lista: bairros.concat(cobertos) };
+  }
 
-    const recAl = $("#lista-alertas-recentes"); recAl.replaceChildren();
-    const rel = alertasRelevantes().filter((a) => !state.cidade || (bairroPorId(a.bairroId) || {}).cidade === state.cidade).slice().sort((a, b) => new Date(b.data) - new Date(a.data)).slice(0, 3);
-    if (!rel.length) recAl.append(el("li", "empty", "Sem alertas recentes."));
-    rel.forEach((a) => recAl.append(itemAlerta(a, true)));
+  /* ---- 10.2 Definir a posição do usuário ---- */
+  function definirLocal(ponto, origem, extra) {
+    state.local = Object.assign({ lat: ponto.lat, lng: ponto.lng, origem, precisao: null, bairroId: null, quando: new Date().toISOString() }, extra);
+    state.fuga.destino = "";
+    salvarJSON(STORAGE.local, state.local);
+    renderLocais(true);
+  }
 
-    renderOrientacoes($("#lista-orientacoes"));
+  function usarGPS(status) {
+    if (!("geolocation" in navigator)) {
+      status.textContent = "Este navegador não oferece localização. Escolha o bairro na lista.";
+      return;
+    }
+    const sucesso = (pos) => {
+      definirLocal({ lat: pos.coords.latitude, lng: pos.coords.longitude }, "gps", { precisao: Math.round(pos.coords.accuracy) });
+      status.textContent = "Localização encontrada.";
+    };
+    const msgs = {
+      1: "A permissão de localização foi negada. Escolha onde você está na lista ou toque no mapa.",
+      2: "Não foi possível obter sua posição agora. Escolha onde você está na lista ou toque no mapa.",
+      3: "A localização não respondeu a tempo. Escolha onde você está na lista ou toque no mapa."
+    };
+    status.textContent = "Buscando sua localização…";
+    // 1ª tentativa: posição aproximada (rede/Wi-Fi), rápida e funciona em computador sem GPS.
+    navigator.geolocation.getCurrentPosition(sucesso, (erro) => {
+      if (erro.code === 1) { status.textContent = msgs[1]; return; }
+      // 2ª tentativa: alta precisão (GPS do aparelho), com mais tempo.
+      status.textContent = "Tentando com mais precisão, isso pode levar alguns segundos…";
+      navigator.geolocation.getCurrentPosition(sucesso, (erro2) => {
+        status.textContent = msgs[erro2.code] || msgs[2];
+      }, { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 });
+    }, { enableHighAccuracy: false, timeout: 12000, maximumAge: 300000 });
+  }
+
+  // Controles de localização (GPS + lista de bairros), usados na tela "Onde estou" e na tela de fuga.
+  function montarSeletorLocal(destino, sufixo) {
+    destino.replaceChildren();
+    const status = el("p", "local-status");
+    status.setAttribute("role", "status");
+    const campo = el("div", "field");
+    const rotulo = el("label", "", "Ou escolha onde você está");
+    rotulo.htmlFor = `sel-local-${sufixo}`;
+    const select = el("select");
+    select.id = `sel-local-${sufixo}`;
+    const vazio = el("option", "", "Selecione o bairro"); vazio.value = ""; select.append(vazio);
+    state.bairros.slice().sort((x, y) => x.cidade.localeCompare(y.cidade, "pt-BR") || x.nome.localeCompare(y.nome, "pt-BR")).forEach((b) => {
+      const o = el("option", "", `${b.nome} (${b.cidade})`); o.value = String(b.id); select.append(o);
+    });
+    select.addEventListener("change", () => {
+      const b = bairroPorId(select.value);
+      if (!b) return;
+      definirLocal({ lat: b.lat, lng: b.lng }, "bairro", { bairroId: b.id });
+      status.textContent = `Local definido: ${b.nome}, ${b.cidade}.`;
+    });
+    campo.append(rotulo, select);
+    const gps = botao("Usar minha localização", "btn-primary", () => usarGPS(status), "locate");
+    const caixa = el("div", "local-controles");
+    caixa.append(gps, campo);
+    destino.append(caixa, status);
+    seletoresLocal.push(select);
+  }
+
+  function iniciarLocais() {
+    montarSeletorLocal($("#slot-local-estou"), "estou");
+    montarSeletorLocal($("#slot-local-fuga"), "fuga");
+    if (!window.MapaProprio) { // sem o mapa próprio, as telas continuam funcionando só com texto
+      $$(".map-local, .map-fuga").forEach((c) => { c.hidden = true; });
+      return;
+    }
+    let avisouTiles = false; // um único aviso para os dois mapas
+    const aoErro = () => {
+      if (avisouTiles) return;
+      avisouTiles = true;
+      toast("Não foi possível carregar as imagens do mapa de fundo. Confira a conexão: áreas, marcadores e a rota continuam visíveis.", "erro");
+    };
+    mapaLocal = window.MapaProprio.criar($("#mapa-local"), {
+      aoClicar: (ponto) => { definirLocal(ponto, "mapa"); toast("Posição ajustada no mapa.", "sucesso"); },
+      aoErroTiles: aoErro
+    });
+    mapaFuga = window.MapaProprio.criar($("#mapa-fuga"), { aoErroTiles: aoErro });
+  }
+
+  /* ---- 10.3 Tela "Onde estou" ---- */
+  const TEXTO_RISCO = {
+    Alto: "Risco alto neste local. Se estiver em encosta ou área que alaga, saia agora e siga a Defesa Civil.",
+    Moderado: "Risco moderado. Fique atento e já saiba para onde ir se a situação piorar.",
+    Baixo: "Risco baixo. Não há necessidade de sair, mas continue acompanhando."
+  };
+
+  function linkBotao(texto, href, cls, iconeNome) {
+    const a = el("a", `btn ${cls}`);
+    a.href = href;
+    if (iconeNome) a.append(icone(iconeNome));
+    a.append(document.createTextNode(texto));
+    return a;
+  }
+
+  function renderSituacao() {
+    const corpo = $("#situacao-corpo"), card = $("#card-situacao");
+    corpo.replaceChildren();
+    card.className = "card situacao";
+    const sit = situacaoAtual();
+    if (!sit) {
+      corpo.append(el("p", "eyebrow", "Sua localização"), el("p", "situacao-titulo", "Onde você está?"),
+        el("p", "", "Use o GPS, escolha o bairro na lista ou toque no mapa. Com isso você vê o risco do local e a rota de saída."));
+      return;
+    }
+    const l = state.local;
+    const origem = `${LOCAL_ORIGEM[l.origem]}${l.origem === "gps" && l.precisao ? `, precisão de cerca de ${l.precisao} m` : ""}.`;
+    if (!sit.dentro) {
+      const cidades = new Set(state.bairros.map((b) => b.cidade)).size;
+      corpo.append(el("p", "eyebrow", "Fora das áreas monitoradas"), el("p", "situacao-titulo", "Nenhum bairro monitorado por perto"),
+        el("p", "", `O mais próximo é ${sit.bairro.nome} (${sit.bairro.cidade}), a ${formatarDist(sit.km)}. A demonstração cobre ${state.bairros.length} bairros em ${cidades} cidades: escolha um deles na lista para testar.`),
+        el("p", "muted", origem), linkBotao("Ver rota de fuga", "#fuga", "btn-secondary", "exit"));
+      return;
+    }
+    const b = sit.bairro, nivel = RISCO_PARA_NIVEL[b.risco];
+    card.className = `card situacao alert-now nivel-${nivel}`;
+    const topo = el("div", "situacao-topo");
+    topo.append(el("p", "eyebrow", "Você está em"), el("span", `badge badge-${classe(b.risco)}`, `Risco ${b.risco}`));
+    const medidas = el("dl", "medidas");
+    [["Chuva (simulada)", `${fmt(b.chuva)} mm`], ["Temperatura (simulada)", `${fmt(b.temperatura)} °C`]].forEach(([t, v]) => {
+      const d = el("div"); d.append(el("dt", "", t), el("dd", "", v)); medidas.append(d);
+    });
+    corpo.append(topo, el("p", "situacao-titulo", `${b.nome}, ${b.cidade}`), el("p", "situacao-risco", TEXTO_RISCO[b.risco]),
+      el("p", "orientacao", b.orientacao), medidas);
+    if (b.risco === "Alto") corpo.append(linkBotao("Sair desta área", "#fuga", "btn-danger btn-lg", "exit"));
+    else if (b.risco === "Moderado") corpo.append(linkBotao("Ver rota de fuga", "#fuga", "btn-secondary", "exit"));
+    corpo.append(el("p", "simulado", `${origem} Dado demonstrativo, não é alerta oficial.`));
+  }
+
+  function renderMapaLocal(mover) {
+    if (!mapaLocal) return;
+    const areas = [], pinos = [];
+    state.bairros.forEach((b) => {
+      areas.push({ lat: b.lat, lng: b.lng, raioM: RAIO_BAIRRO_M[b.risco], classe: classe(b.risco) });
+      pinos.push({ lat: b.lat, lng: b.lng, classe: `pin ${classe(b.risco)}`, rotulo: `${b.nome}, risco ${b.risco}`, ativo: false, aoClicar: null });
+    });
+    LOCAIS_COBERTOS.forEach((c) => pinos.push({ lat: c.lat, lng: c.lng, classe: "pin-coberto", rotulo: `${c.nome}, local coberto fictício`, ativo: false, aoClicar: null }));
+    if (state.local) pinos.push({ lat: state.local.lat, lng: state.local.lng, classe: "pin-voce", rotulo: "Você está aqui", ativo: false, aoClicar: null });
+    mapaLocal.setCamadas(areas, pinos);
+    if (!mover) return;
+    const sit = situacaoAtual();
+    if (!sit) mapaLocal.ajustar(state.bairros.map((b) => ({ lat: b.lat, lng: b.lng })));
+    else if (sit.dentro) mapaLocal.irPara(state.local.lat, state.local.lng, 14);
+    else mapaLocal.ajustar([state.local, sit.bairro], { zoomMax: 12 });
+  }
+
+  /* ---- 10.4 Tela de fuga ---- */
+  function renderFuga(mover) {
+    const semLocal = !state.local;
+    ["#fuga-destino", "#fuga-mapa-card", "#fuga-alternativas-card"].forEach((id) => { $(id).hidden = semLocal; });
+    $("#fuga-sem-local").hidden = !semLocal;
+    const resumo = $("#fuga-resumo");
+    if (semLocal) {
+      resumo.textContent = "Informe onde você está para ver o destino mais seguro. Os telefones de emergência já estão abaixo.";
+      if (mapaFuga) mapaFuga.setRota(null);
+      return;
+    }
+    const dados = calcularDestinos();
+    const { sit, lista } = dados;
+    const quem = sit.dentro ? `Você está em ${sit.bairro.nome} (risco ${sit.bairro.risco.toLowerCase()}).` : "Você está fora das áreas monitoradas.";
+    const escolhido = lista.find((d) => d.chave === state.fuga.destino) || lista[0] || null;
+    const card = $("#fuga-destino");
+    card.replaceChildren();
+
+    if (!escolhido) {
+      resumo.textContent = quem;
+      const semDestino = el("h3", "", "Nenhum destino a menos de 40 km");
+      semDestino.id = "t-fuga-destino";
+      card.append(el("p", "eyebrow", "Sem destino cadastrado"), semDestino,
+        el("p", "", "A demonstração não tem bairro sem risco nem local coberto perto de você. Ligue para a Defesa Civil (199) e siga as orientações."));
+      $("#fuga-alternativas-card").hidden = true;
+      renderMapaFuga(null, [], mover);
+      return;
+    }
+
+    const recomendado = escolhido === lista[0];
+    const direcao = rumo(state.local, escolhido);
+    resumo.textContent = `${quem} Destino ${recomendado ? "recomendado" : "escolhido"}: ${escolhido.nome}, a ${formatarDist(escolhido.km)} em direção ao ${direcao}.`;
+
+    const selos = el("div", "occ-meta");
+    if (escolhido.tipo === "bairro") selos.append(el("span", "badge badge-baixo", "Bairro sem risco"));
+    else selos.append(el("span", "badge badge-neutro", `Local coberto: ${escolhido.dado.tipo}`), el("span", "tag", "Sugestão fictícia"));
+    const titulo = el("h3", "", escolhido.nome);
+    titulo.id = "t-fuga-destino";
+    titulo.tabIndex = -1;
+    const medidas = el("dl", "medidas");
+    [["Distância em linha reta", formatarDist(escolhido.km)], ["Direção", direcao.charAt(0).toUpperCase() + direcao.slice(1)]].forEach(([t, v]) => {
+      const d = el("div"); d.append(el("dt", "", t), el("dd", "", v)); medidas.append(d);
+    });
+    card.append(el("p", "eyebrow", recomendado ? "Destino recomendado" : "Destino escolhido"), titulo, selos,
+      el("p", "destino-instrucao", `Siga em direção ao ${direcao} por cerca de ${formatarDist(escolhido.km)}.`), medidas);
+    if (escolhido.tipo === "coberto") {
+      card.append(el("p", "muted", `${escolhido.cidade}. Endereço fictício: ${escolhido.dado.endereco}. Capacidade fictícia: ${escolhido.dado.capacidade} pessoas.`));
+    } else {
+      card.append(el("p", "muted", `${escolhido.cidade}. Risco atual simulado: baixo.`));
+    }
+    if (dados.bairros.length === 0) {
+      card.append(el("p", "destino-aviso", "Não há bairro sem risco por perto. O destino principal é o local coberto mais próximo."));
+    }
+
+    const alt = $("#fuga-alternativas");
+    alt.replaceChildren();
+    lista.filter((d) => d !== escolhido).forEach((d) => {
+      const li = el("li");
+      const b = el("button", `row-item nivel-${d.tipo === "bairro" ? "baixo" : "informativo"}`);
+      b.type = "button";
+      const principal = el("div", "row-main");
+      const t = el("div", "row-title"); t.append(el("span", "", d.nome), d.tipo === "bairro" ? el("span", "badge badge-baixo", "Bairro sem risco") : el("span", "badge badge-neutro", "Local coberto"));
+      if (d === lista[0]) t.append(el("span", "tag", "Recomendado"));
+      principal.append(t, el("p", "row-sub", `${formatarDist(d.km)} em direção ao ${rumo(state.local, d)}${d.tipo === "coberto" ? ", sugestão fictícia" : ""}`));
+      b.append(principal);
+      b.setAttribute("aria-label", `Ir para ${d.nome}, ${d.tipo === "bairro" ? "bairro sem risco" : "local coberto fictício"}, a ${formatarDist(d.km)} em direção ao ${rumo(state.local, d)}`);
+      b.addEventListener("click", () => selecionarDestino(d.chave));
+      li.append(b); alt.append(li);
+    });
+    $("#fuga-alternativas-card").hidden = lista.length <= 1;
+    renderMapaFuga(escolhido, lista, mover);
+  }
+
+  function selecionarDestino(chave) {
+    state.fuga.destino = chave;
+    renderFuga(true);
+    const t = $("#t-fuga-destino");
+    if (t) t.focus({ preventScroll: false });
+  }
+
+  function renderMapaFuga(escolhido, lista, mover) {
+    if (!mapaFuga) return;
+    const areas = state.bairros.map((b) => ({ lat: b.lat, lng: b.lng, raioM: RAIO_BAIRRO_M[b.risco], classe: classe(b.risco) }));
+    const pinos = [];
+    lista.forEach((d) => {
+      if (d === escolhido) return;
+      pinos.push({ lat: d.lat, lng: d.lng, classe: d.tipo === "bairro" ? `pin ${classe("Baixo")}` : "pin-coberto", rotulo: `Escolher ${d.nome} como destino`, ativo: false, aoClicar: () => selecionarDestino(d.chave) });
+    });
+    if (escolhido) pinos.push({ lat: escolhido.lat, lng: escolhido.lng, classe: "pin-destino", rotulo: `Destino: ${escolhido.nome}`, ativo: false, aoClicar: null });
+    pinos.push({ lat: state.local.lat, lng: state.local.lng, classe: "pin-voce", rotulo: "Você está aqui", ativo: false, aoClicar: null });
+    mapaFuga.setCamadas(areas, pinos);
+    mapaFuga.setRota(escolhido ? { de: state.local, para: escolhido } : null);
+    if (mover) {
+      if (escolhido) mapaFuga.ajustar([state.local, escolhido], { margem: 64, zoomMax: 15 });
+      else mapaFuga.irPara(state.local.lat, state.local.lng, 13);
+    }
+  }
+
+  // Atualiza as duas telas quando a posição ou o risco mudam.
+  function renderLocais(mover) {
+    renderSituacao();
+    seletoresLocal.forEach((s) => { s.value = state.local && state.local.origem === "bairro" && state.local.bairroId ? String(state.local.bairroId) : ""; });
+    if (!state.local) $("#det-local").open = true;
+    renderMapaLocal(!!mover && state.view === "onde-estou");
+    renderFuga(!!mover && state.view === "fuga");
   }
 
   function renderOrientacoes(destino) {
@@ -660,7 +1136,7 @@
     const b = bairroPorId(o.bairroId);
     const li = el("li");
     const card = el("article", `row-item nivel-${classeGravidade(o.gravidade)}`);
-    const ic = el("div", "feature-icon"); ic.style.margin = "0"; ic.append(icone(ICONES_TIPO[o.tipo] || "info"));
+    const ic = el("div", "feature-icon"); ic.append(icone(ICONES_TIPO[o.tipo] || "info"));
     const main = el("div", "row-main");
     const t = el("div", "row-title"); t.append(el("span", "", `${TIPOS[o.tipo]} em ${b ? b.nome : "bairro"}`));
     const meta = el("div", "occ-meta");
@@ -688,14 +1164,14 @@
     if (!o) return;
     o.status = status;
     salvarOcorrencias();
-    renderOcorrencias(); renderVisaoGeral(); renderComunidade();
+    renderOcorrencias(); renderComunidade();
     toast(`Status atualizado: ${STATUS[status]}.`, "sucesso");
   }
 
   function removerOcorrencia(id) {
     state.ocorrencias = state.ocorrencias.filter((o) => o.id !== id);
     salvarOcorrencias();
-    renderOcorrencias(); renderVisaoGeral(); renderMapa(); renderComunidade(); atualizarContadores();
+    renderOcorrencias(); renderMapa(); renderComunidade(); atualizarContadores();
     toast("Relato removido.", "sucesso");
   }
 
@@ -752,7 +1228,7 @@
       else if (quando.getTime() > Date.now() + 60000) e.data = "A data e o horário não podem estar no futuro.";
       const b = bairroPorId(campos.bairro.value);
       if (b && state.rascunho && distanciaKm(state.rascunho, b) > DISTANCIA_MAX_KM) {
-        e.bairro = `O ponto marcado fica a mais de ${DISTANCIA_MAX_KM} km de ${b.nome}. Escolha outro bairro ou marque outro local.`;
+        e.bairro = `O local informado fica a mais de ${DISTANCIA_MAX_KM} km de ${b.nome}. Escolha outro bairro ou informe outro local.`;
       }
       Object.keys(campos).forEach((n) => erro(n, e[n] || ""));
       return e;
@@ -835,7 +1311,6 @@
 
   function renderAlertasUI() {
     atualizarContadores(); renderPainelNotificacoes(); renderAlertasView();
-    renderVisaoGeral();
   }
 
   function renderAlertasView() {
@@ -982,6 +1457,7 @@
       state.bairros = BAIRROS.map((b) => Object.assign({}, b));
       state.config = { nome: "", cidade: "", acompanhados: [] }; state.cidade = ""; $("#sel-cidade").value = "";
       state.ocorrencias = []; state.alertas = [];
+      state.local = null; state.fuga.destino = "";
       confirmar.hidden = true;
       renderTudo(); ajustarMapa();
       toast("Dados locais apagados.", "sucesso");
@@ -1003,9 +1479,9 @@
     popularSelectBairros($("#occ-filtro-bairro"), true, "Todos os bairros");
     popularSelectBairros($("#alerta-bairro"), true, "Todos os bairros");
     popularSelectBairros($("#bairro"), false);
-    renderVisaoGeral(); renderMonitoramento(); renderOcorrencias(); renderComunidade();
+    renderMonitoramento(); renderOcorrencias(); renderComunidade();
     renderPainelNotificacoes(); renderAlertasView(); atualizarContadores();
-    renderMapa(); renderPainelBairro(); renderConfig();
+    renderMapa(); renderPainelBairro(); renderConfig(); renderLocais(false);
     const nome = state.config.nome;
     $("#perfil-nome").textContent = nome || "Visitante";
     $("#perfil-avatar").textContent = iniciais(nome || "Visitante");
@@ -1021,6 +1497,7 @@
     iniciarOcorrencias();
     iniciarAlertas();
     iniciarConfig();
+    iniciarLocais();
     renderTudo();
     window.addEventListener("hashchange", () => rotear(true));
     rotear(false);

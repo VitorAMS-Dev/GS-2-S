@@ -38,7 +38,26 @@
 
   const BAIRROS = BAIRROS_BASE.map((b) => Object.assign({}, b, { risco: nivelPorChuva(b.chuva) }));
 
+  // Locais cobertos FICTÍCIOS (sugestão para a demonstração): abrigos, escolas e ginásios inventados,
+  // posicionados em pontos mais altos ou afastados dos bairros de risco. Nomes, endereços e capacidades não existem.
+  const LOCAIS_COBERTOS = [
+    { id: 1,  nome: "Ginásio Vila Esperança",         tipo: "Ginásio",            cidade: "São Paulo",      lat: -23.6950, lng: -46.7650, endereco: "Rua das Acácias, 100",       capacidade: 400 },
+    { id: 2,  nome: "Escola Estadual Monte Claro",    tipo: "Escola",             cidade: "São Paulo",      lat: -23.4420, lng: -46.6800, endereco: "Av. do Mirante, 250",        capacidade: 300 },
+    { id: 3,  nome: "Centro Comunitário Pinheiros",   tipo: "Centro comunitário", cidade: "São Paulo",      lat: -23.5600, lng: -46.7010, endereco: "Rua dos Ipês, 45",           capacidade: 150 },
+    { id: 4,  nome: "Quadra Coberta Vila Nova",       tipo: "Quadra coberta",     cidade: "Rio de Janeiro", lat: -22.8650, lng: -43.3290, endereco: "Rua Bela Vista, 310",        capacidade: 250 },
+    { id: 5,  nome: "CIEP Alto Seguro",               tipo: "Escola",             cidade: "Rio de Janeiro", lat: -22.9250, lng: -43.2330, endereco: "Estrada do Alto, 800",       capacidade: 500 },
+    { id: 6,  nome: "Escola Municipal Serra Azul",    tipo: "Escola",             cidade: "Belo Horizonte", lat: -19.9680, lng: -44.0130, endereco: "Rua Serra Azul, 72",         capacidade: 350 },
+    { id: 7,  nome: "Centro Cultural Savassi",        tipo: "Centro comunitário", cidade: "Belo Horizonte", lat: -19.9340, lng: -43.9400, endereco: "Av. das Palmeiras, 1200",    capacidade: 200 },
+    { id: 8,  nome: "Ginásio Cidade Alta",            tipo: "Ginásio",            cidade: "Salvador",       lat: -12.9440, lng: -38.4790, endereco: "Rua da Colina, 18",          capacidade: 450 },
+    { id: 9,  nome: "Igreja Comunitária Esperança",   tipo: "Igreja",             cidade: "Salvador",       lat: -12.8900, lng: -38.4300, endereco: "Travessa Nova Luz, 5",       capacidade: 180 },
+    { id: 10, nome: "Escola Municipal Planalto",      tipo: "Escola",             cidade: "Recife",         lat: -8.1050,  lng: -34.9350, endereco: "Rua do Planalto, 140",       capacidade: 320 },
+    { id: 11, nome: "Centro de Convivência Boa Vista", tipo: "Centro comunitário", cidade: "Recife",        lat: -8.1230,  lng: -34.9040, endereco: "Av. Beira Rio, 600",         capacidade: 220 },
+    { id: 12, nome: "Ginásio Comunitário Sarandi Alto", tipo: "Ginásio",          cidade: "Porto Alegre",   lat: -29.9860, lng: -51.1200, endereco: "Rua Morro Alto, 90",         capacidade: 380 },
+    { id: 13, nome: "Escola Municipal Horizonte",     tipo: "Escola",             cidade: "Porto Alegre",   lat: -29.9990, lng: -51.1360, endereco: "Rua Horizonte, 33",          capacidade: 280 }
+  ];
+
   const STORAGE = {
+    local: "alertabairro:local",
     inscricoes: "alertabairro:inscricoes",
     ocorrencias: "alertabairro:ocorrencias",
     alertas: "alertabairro:alertas",
@@ -208,7 +227,7 @@
   }
 
   window.AB = {
-    BAIRROS, STORAGE, LIMIAR_ALTO, LIMIAR_MODERADO, nivelPorChuva,
+    BAIRROS, LOCAIS_COBERTOS, STORAGE, LIMIAR_ALTO, LIMIAR_MODERADO, nivelPorChuva,
     $, $$, normalizarTexto, formatarNumero, criarElemento,
     lerJSON, salvarJSON, lerInscricoes, salvarInscricao,
     validarNome, validarEmail, formatarCep, validarCep, validarBairroCep

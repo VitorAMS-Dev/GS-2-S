@@ -6,7 +6,7 @@ Plataforma comunitária de monitoramento climático e comunicação preventiva, 
 
 ## 1. Descrição
 
-O AlertaBairro é uma plataforma comunitária de monitoramento climático e prevenção de desastres. O site institucional apresenta o projeto e o **painel** (`solucao.html`) funciona como um aplicativo: sidebar, mapa interativo com visão de satélite, registro comunitário de ocorrências, alertas personalizados simulados e configurações. Tudo roda no navegador, sem backend.
+O AlertaBairro é uma plataforma comunitária de monitoramento climático e prevenção de desastres. O site institucional apresenta o projeto e o **painel** (`solucao.html`) funciona como um aplicativo prático: ao entrar, a pessoa vê **onde está, em que situação de risco está esse local e como sair dele com urgência**. Há também mapa inteligente, registro comunitário de ocorrências, alertas simulados e configurações. Tudo roda no navegador, sem backend.
 
 ## 2. Problema identificado
 
@@ -16,11 +16,13 @@ Dado de contexto: cerca de **8,2 milhões de pessoas** viviam em áreas de risco
 
 ## 3. Proposta de solução
 
-1. Consulta de indicadores climáticos por bairro.
-2. Visualização de níveis de risco (baixo, moderado, alto).
-3. Identificação de áreas que exigem atenção, com filtros.
-4. Cadastro para receber alertas (demonstrativo).
-5. Incentivo à prevenção e à colaboração comunitária.
+1. Tela "Onde estou": localização do usuário, nível de risco do local e orientação.
+2. Botão fixo "Preciso sair agora" e tela de **rota de fuga** até um destino seguro.
+3. Consulta de indicadores climáticos por bairro.
+4. Visualização de níveis de risco (baixo, moderado, alto).
+5. Identificação de áreas que exigem atenção, com filtros.
+6. Cadastro para receber alertas (demonstrativo).
+7. Incentivo à prevenção e à colaboração comunitária.
 
 ## 4. Objetivo do projeto
 
@@ -36,12 +38,13 @@ Construir um site funcional, responsivo e acessível que demonstre como a tecnol
 - HTML5 semântico
 - CSS3 (Flexbox, Grid, Media Queries, Custom Properties)
 - JavaScript Vanilla (manipulação do DOM, navegação por hash)
+- `navigator.geolocation` (API nativa do navegador, opcional) para o botão "Usar minha localização". Se não for usada ou for negada, o usuário escolhe o bairro na lista ou toca no mapa
 - LocalStorage (relatos, alertas, preferências e inscrições)
-- [Leaflet 1.9.4](https://leafletjs.com) (biblioteca de mapas, incluída localmente em `lib/leaflet/`)
-- Mapa padrão: OpenStreetMap. Satélite: imagens Esri World Imagery (exigem internet)
+- Mapa próprio em JavaScript puro (`js/mapa.js`): imagens do [OpenStreetMap](https://www.openstreetmap.org) (ou do MapTiler, se `MAPTILER_KEY` for definida em `js/mapa.js`) em `<img>` e áreas/marcadores em HTML, posicionados por cálculo de coordenadas (sem biblioteca)
+- Mapas do [Google Maps](https://www.google.com/maps) (padrão e satélite) incorporados por `<iframe>` (exigem internet)
 - Fonte Manrope via Google Fonts, com fallback para fontes do sistema
 
-Sem frameworks, CSS inline ou JavaScript inline. Leaflet é a única biblioteca, adotada porque a reformulação pediu um mapa interativo.
+Sem frameworks, bibliotecas, CSS inline ou JavaScript inline.
 
 ## 7. Estrutura de pastas
 
@@ -55,18 +58,21 @@ AlertaBairro/
 ├── css/
 │   └── style.css
 ├── js/
-│   ├── main.js       (dados, utilitários e validações compartilhados; menu do site)
-│   └── app.js        (painel: mapa, relatos, alertas, configurações)
-└── lib/
-    └── leaflet/      (leaflet.js, leaflet.css, images/)
+│   ├── main.js       (dados dos bairros e dos locais cobertos fictícios, utilitários e validações; menu do site)
+│   ├── mapa.js       (mapa próprio: imagens, áreas, marcadores, rota em linha reta, zoom e arraste)
+│   └── app.js        (painel: onde estou, rota de fuga, mapa, relatos, alertas, configurações)
+└── img/
+    └── favicon.svg   (ícone do site)
 ```
 
 ## 8. Funcionalidades
 
-- **Painel (solucao.html):** sidebar (vira menu lateral no celular, com barra de abas inferior), header com busca de bairros, seleção de localização por cidade, notificações, perfil e ação rápida. Navegação por hash: visão geral, monitoramento, mapa, ocorrências, alertas, comunidade e configurações.
-- **Visão geral:** saudação, indicadores calculados dos dados (bairros, risco alto, chuva e temperatura médias), mapa, bairros em atenção, alertas recentes, últimas ocorrências e orientações.
-- **Mapa inteligente:** Leaflet com alternância entre mapa padrão e satélite, áreas coloridas por nível de risco, marcadores, popups com detalhes, camadas ligáveis, legenda e zoom. Alto risco tem marcador pulsante.
-- **Registro comunitário:** tipos de ocorrência, gravidade, bairro, data e horário, descrição e localização (do bairro ou marcada no mapa). Validação, feedback, listagem, filtros por bairro e tipo, mudança de status e remoção dos relatos próprios. Todo relato é identificado como **comunitário e não verificado**.
+- **Painel (solucao.html):** menu do site no topo (igual ao das outras páginas), sidebar (vira menu lateral no celular, com barra de abas inferior), busca de bairros, filtro por cidade, notificações, perfil e ação rápida. Navegação por hash: onde estou, rota de fuga, monitoramento, mapa, ocorrências, alertas, comunidade e configurações.
+- **Onde estou (tela inicial):** a posição vem do GPS, de um bairro escolhido na lista ou de um toque no mapa (e fica salva no navegador). A tela mostra o bairro mais próximo, o **nível de risco**, a orientação e a chuva simulada. Se a pessoa está a mais de 8 km de qualquer bairro monitorado, a tela avisa que ela está fora das áreas monitoradas. Em risco **alto** aparece o botão "Sair desta área"; em risco **moderado**, "Ver rota de fuga"; em risco baixo, só o status.
+- **Rota de fuga:** acessível a qualquer momento pelo botão fixo "Preciso sair agora" (também por teclado) ou pela sidebar. Mostra o destino recomendado, a distância e a direção (norte, sul etc.), a rota em linha reta no mapa próprio, destinos alternativos (escolha pela lista ou tocando no marcador) e os telefones 199, 193 e 192 com `tel:`. Regra de prioridade: **bairros sem risco (nível baixo) vêm antes dos locais cobertos**; sem nenhum bairro sem risco até 40 km, o local coberto mais próximo vira o destino principal e a tela explica isso. Nenhum bairro de risco alto ou moderado é sugerido como destino.
+- **Locais cobertos (fictícios):** lista `LOCAIS_COBERTOS` em `js/main.js` (13 abrigos, escolas, ginásios e centros comunitários inventados, com endereço e capacidade inventados). São uma sugestão para a demonstração e devem ser revisados ou substituídos pelo grupo.
+- **Mapa inteligente:** mapa próprio com **áreas coloridas por nível de risco**, marcadores de bairros e de relatos (cor da gravidade), camadas ligáveis, zoom, arraste e navegação por teclado; alternância para Google Maps e satélite (com o contorno do bairro). Duas listas sob o mapa (riscos por bairro e relatos recentes) centralizam o mapa no item escolhido.
+- **Registro comunitário:** tipos de ocorrência, gravidade, bairro, data e horário, descrição e localização (a do bairro, um clique no mapa, ou um ponto informado por link do Google Maps / OpenStreetMap ou por coordenadas). Validação, feedback, listagem, filtros por bairro e tipo, mudança de status e remoção dos relatos próprios. Todo relato é identificado como **comunitário e não verificado**.
 - **Alertas personalizados:** seleção de bairro, alerta atual com nível (informativo, atenção, risco elevado), orientações, histórico e notificações dentro do aplicativo. O botão "Simular atualização de chuva" recalcula o risco e gera um novo alerta.
 - **Inscrição demonstrativa:** formulário com validação de nome, e-mail, CEP e bairro (mantido da versão anterior).
 - **Comunidade e configurações:** estatísticas dos relatos, contatos de emergência (199, 193, 192), nome para a saudação, localização padrão, bairros acompanhados e gerenciamento dos dados locais.
@@ -74,12 +80,14 @@ AlertaBairro/
 
 ### Limitações e o que depende de integrações externas
 
+- A **rota de fuga é demonstrativa e em linha reta**: não considera ruas, alagamentos nem bloqueios (rota por ruas exigiria um serviço externo). O aviso aparece na própria tela. Os **locais cobertos são fictícios**. O destino só é sugerido até 40 km do usuário.
+- O GPS depende da permissão do usuário e de o navegador oferecer `navigator.geolocation` (em geral exige `https` ou `localhost`). Sem ele, a seleção manual alimenta o mesmo fluxo.
 - Os indicadores de chuva, temperatura e risco são **simulados**. O risco é calculado a partir da chuva simulada (a partir de 40 mm é moderado, a partir de 70 mm é alto).
 - Os alertas são **simulados** e aparecem só no aplicativo. **Nenhum SMS, WhatsApp, e-mail ou push é enviado.** Isso exigiria backend e serviços de mensageria.
 - Relatos e preferências ficam no LocalStorage do navegador: não são compartilhados entre pessoas nem verificados.
 - Dados oficiais em tempo real exigiriam integração com fontes como Cemaden e INMET.
 - As coordenadas dos bairros são aproximadas.
-- Os mapas (padrão e satélite) e a fonte precisam de internet. Respeite os termos de uso do OpenStreetMap e da Esri em uso além de demonstração.
+- Os mapas e a fonte precisam de internet. Nos modos Google Maps e Satélite (`<iframe>`), só um local aparece por vez; áreas e marcadores de todos os bairros existem no modo "Mapa". Se as imagens do OpenStreetMap não carregarem, as áreas e os marcadores continuam visíveis sobre um fundo liso. Respeite os termos de uso do OpenStreetMap e do Google em uso além de demonstração.
 
 ## 9. Como executar localmente
 
@@ -144,4 +152,4 @@ Preencha esta seção com informações reais antes da entrega.
 
 ## 16. Aviso sobre dados
 
-Os bairros são referências geográficas reais, mas todos os indicadores climáticos, níveis de risco e alertas são fictícios. Os relatos iniciais marcados como "Relato demonstrativo" são inventados; os relatos que você registra ficam apenas no seu navegador e são sempre não verificados.
+Os bairros são referências geográficas reais, mas todos os indicadores climáticos, níveis de risco, alertas, **locais cobertos e rotas de fuga** são fictícios ou demonstrativos. Os relatos iniciais marcados como "Relato demonstrativo" são inventados; os relatos que você registra ficam apenas no seu navegador e são sempre não verificados.

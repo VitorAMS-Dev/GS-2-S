@@ -1,55 +1,53 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>AlertaBairro | Informação local, prevenção coletiva</title>
-  <meta name="description" content="AlertaBairro: plataforma comunitária de monitoramento climático e comunicação preventiva sobre enchentes, alagamentos e deslizamentos. Projeto acadêmico FIAP.">
+  <meta name="description"
+    content="AlertaBairro: plataforma comunitária de monitoramento climático e comunicação preventiva sobre enchentes, alagamentos e deslizamentos. Projeto acadêmico FIAP.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
-  <script src="js/main.js" defer></script>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
 </head>
+
 <body>
-  <svg class="sprite" aria-hidden="true" focusable="false">
-    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></symbol>
-    <symbol id="i-activity" viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></symbol>
-    <symbol id="i-map" viewBox="0 0 24 24"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14"/><path d="M15 6v14"/></symbol>
-    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3L2 21h20L12 3z"/><path d="M12 10v5"/><path d="M12 18h.01"/></symbol>
-    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0c0 6 2 7 2 8H4c0-1 2-2 2-8z"/><path d="M10 21h4"/></symbol>
-    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6"/><circle cx="17" cy="9" r="2.5"/><path d="M18 14c2.5.5 4 2.5 4 5"/></symbol>
-    <symbol id="i-settings" viewBox="0 0 24 24"><path d="M4 6h10"/><path d="M18 6h2"/><circle cx="16" cy="6" r="2"/><path d="M4 12h2"/><path d="M10 12h10"/><circle cx="8" cy="12" r="2"/><path d="M4 18h10"/><path d="M18 18h2"/><circle cx="16" cy="18" r="2"/></symbol>
-    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></symbol>
-    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
-    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
-    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
-    <symbol id="i-droplet" viewBox="0 0 24 24"><path d="M12 3s7 7.5 7 12a7 7 0 0 1-14 0c0-4.5 7-12 7-12z"/></symbol>
-    <symbol id="i-cloud-rain" viewBox="0 0 24 24"><path d="M7 15a4.5 4.5 0 0 1-.5-9A6 6 0 0 1 18 7.5a4 4 0 0 1-.5 7.5H7z"/><path d="M8 18l-1 3M12 18l-1 3M16 18l-1 3"/></symbol>
-    <symbol id="i-thermometer" viewBox="0 0 24 24"><path d="M14 14.5V5a2 2 0 0 0-4 0v9.5a4 4 0 1 0 4 0z"/></symbol>
-    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7"/></symbol>
-    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s7-6 7-11a7 7 0 0 0-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></symbol>
-    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"/><path d="M9 12l2 2 4-4"/></symbol>
-    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
-    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></symbol>
+
+  <!-- ICONS SPRITE (mantido o seu original) -->
+  <svg class="sprite" style="display: none;" aria-hidden="true" focusable="false">
+    <symbol id="i-map" viewBox="0 0 24 24">
+      <path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2z" />
+      <path d="M9 4v14" />
+      <path d="M15 6v14" />
+    </symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24">
+      <path d="M12 3L2 21h20L12 3z" />
+      <path d="M12 10v5" />
+      <path d="M12 18h.01" />
+    </symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24">
+      <path d="M6 9a6 6 0 0 1 12 0c0 6 2 7 2 8H4c0-1 2-2 2-8z" />
+      <path d="M10 21h4" />
+    </symbol>
   </svg>
-  <a class="skip-link" href="#conteudo">Ir para o conteúdo principal</a>
+
+  <div class="notice-bar">Projeto acadêmico demonstrativo · Os dados exibidos são simulados</div>
+
   <header class="site-header">
     <div class="container header-inner">
-      <a class="brand" href="index.html" aria-label="AlertaBairro, página inicial">
-        <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-          <path d="M16 2C16 2 6 13.5 6 20a10 10 0 0 0 20 0C26 13.5 16 2 16 2Z" fill="#8dc3ea"/>
-          <path d="M11 20.5l3.5 3.5 7-7.5" fill="none" stroke="#0b2545" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+      <a class="brand" href="index.html">
+        <svg viewBox="0 0 32 32" aria-hidden="true">
+          <path d="M16 2C16 2 6 13.5 6 20a10 10 0 0 0 20 0C26 13.5 16 2 16 2Z" fill="#2563eb" />
+          <path d="M11 20.5l3.5 3.5 7-7.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"
+            stroke-linejoin="round" />
         </svg>
         <span>AlertaBairro</span>
       </a>
-      <button class="menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="menu-principal">
-        <span class="sr-only">Abrir menu</span>
-        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
-      </button>
       <nav aria-label="Navegação principal">
-        <ul class="menu" id="menu-principal">
-          <li><a href="index.html" aria-current="page">Início</a></li>
+        <ul class="menu">
+          <li><a href="index.html">Início</a></li>
           <li><a href="solucao.html">Solução</a></li>
           <li><a href="impacto.html">Impacto e ODS</a></li>
           <li><a href="equipe.html">Equipe</a></li>
@@ -61,121 +59,474 @@
 
   <main id="conteudo">
 
-    <section class="hero" aria-labelledby="titulo-hero">
-      <div class="container hero-inner">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="container hero-grid">
         <div>
           <p class="hero-tagline">Informação local. Prevenção coletiva. Vidas protegidas.</p>
-          <h1 id="titulo-hero">AlertaBairro</h1>
-          <p class="lead">Uma plataforma comunitária com mapa por satélite que mostra o nível de risco de enchentes, alagamentos e deslizamentos bairro a bairro e leva orientações de prevenção a quem mora em áreas vulneráveis.</p>
+          <h1>AlertaBairro</h1>
+          <p class="lead">Uma plataforma comunitária com mapa por satélite que mostra o nível de risco de enchentes,
+            alagamentos e deslizamentos bairro a bairro.</p>
           <div class="btn-row">
             <a class="btn btn-light" href="solucao.html">Abrir o painel</a>
-            <a class="btn btn-outline-light" href="impacto.html">Conhecer o impacto</a>
+            <a class="btn btn-outline" href="impacto.html">Conhecer o impacto</a>
           </div>
         </div>
-        <aside class="snapshot" aria-label="Prévia do painel">
-          <div class="snapshot-head"><h2>Bairros com mais chuva</h2><span class="badge badge-neutro">Dados simulados</span></div>
-          <ul id="previa-lista"></ul>
-          <p class="snapshot-note">Prévia com os mesmos dados demonstrativos do painel. Não são medições nem alertas oficiais.</p>
-        </aside>
+        <svg viewBox="700 108 740 692" width="100%" height="100%" preserveAspectRatio="xMidYMid slice"
+          xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="gridD" width="56" height="56" patternUnits="userSpaceOnUse" patternTransform="rotate(-16)">
+              <path d="M56 0H0V56" fill="none" stroke="#1C3A72" stroke-width="1" />
+            </pattern>
+            <!-- Gradientes para o Fade nas 4 bordas (usando a cor de fundo do site #071529) -->
+            <linearGradient id="fadeL" x1="0" x2="1" y1="0" y2="0">
+              <stop offset="0" stop-color="#071529" stop-opacity="1" />
+              <stop offset="1" stop-color="#071529" stop-opacity="0" />
+            </linearGradient>
+            <linearGradient id="fadeR" x1="1" x2="0" y1="0" y2="0">
+              <stop offset="0" stop-color="#071529" stop-opacity="1" />
+              <stop offset="1" stop-color="#071529" stop-opacity="0" />
+            </linearGradient>
+            <linearGradient id="fadeT" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0" stop-color="#071529" stop-opacity="1" />
+              <stop offset="1" stop-color="#071529" stop-opacity="0" />
+            </linearGradient>
+            <linearGradient id="fadeB" x1="0" x2="0" y1="1" y2="0">
+              <stop offset="0" stop-color="#071529" stop-opacity="1" />
+              <stop offset="1" stop-color="#071529" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+
+          <rect x="700" y="108" width="740" height="692" fill="#0F2550" />
+          <rect x="700" y="108" width="740" height="692" fill="url(#gridD)" />
+
+          <path d="M700,610 C820,560 900,710 1000,750 S1250,700 1440,770" fill="none" stroke="#2F66D6" stroke-width="14"
+            opacity=".35" />
+          <g stroke="#0F2550" stroke-width="3" stroke-linejoin="round" fill-opacity=".92">
+            <polygon points="700,290 740,290 800,350 740,470 700,470" fill="#2A4F94" />
+            <polygon points="740,290 760,200 880,170 960,230 930,330 800,350" fill="#2F66D6" />
+            <polygon points="880,170 1040,150 1100,240 1020,310 960,230" fill="#2A4F94" />
+            <polygon points="960,230 1020,310 1000,420 900,440 930,330" fill="#5B97FF" />
+            <polygon points="800,350 930,330 900,440 840,520 740,470" fill="#5B97FF" />
+            <polygon points="1100,240 1240,210 1300,300 1230,380 1130,360 1020,310" fill="#2F66D6" />
+            <polygon points="1000,420 1020,310 1130,360 1180,470 1090,540 990,520" fill="#5B97FF" />
+            <polygon points="1230,380 1300,300 1440,330 1440,470 1320,500 1180,470 1130,360" fill="#2A4F94" />
+            <polygon points="900,440 1000,420 990,520 960,620 860,600 840,520" fill="#2F66D6" />
+            <polygon points="990,520 1090,540 1120,650 1030,700 960,620" fill="#2A4F94" />
+            <polygon points="1090,540 1180,470 1320,500 1300,620 1200,680 1120,650" fill="#5B97FF" />
+            <polygon points="700,470 740,470 840,520 860,600 800,690 700,670" fill="#2A4F94" />
+            <polygon points="1320,500 1440,470 1440,640 1300,620" fill="#2F66D6" />
+          </g>
+
+          <!-- Pins -->
+          <g>
+            <circle cx="950" cy="340" r="16" fill="#5B97FF" opacity=".3" />
+            <circle cx="950" cy="340" r="7" fill="#FFFFFF" stroke="#1457D9" stroke-width="3" />
+            <circle cx="842" cy="414" r="6" fill="#FFFFFF" stroke="#1457D9" stroke-width="3" />
+            <circle cx="1096" cy="436" r="6" fill="#FFFFFF" stroke="#1457D9" stroke-width="3" />
+            <circle cx="1236" cy="580" r="6" fill="#FFFFFF" stroke="#1457D9" stroke-width="3" />
+          </g>
+
+          <!-- Efeito de Fade nas bordas (aplicado por cima do mapa) -->
+          <rect x="700" y="108" width="180" height="692" fill="url(#fadeL)" />
+          <rect x="1260" y="108" width="180" height="692" fill="url(#fadeR)" />
+          <rect x="700" y="108" width="740" height="150" fill="url(#fadeT)" />
+          <rect x="700" y="650" width="740" height="150" fill="url(#fadeB)" />
+
+          <!-- Legenda -->
+          <rect x="760" y="140" width="250" height="34" rx="8" fill="#0B1B3A" fill-opacity=".85" stroke="#27447F" />
+          <circle cx="780" cy="157" r="5" fill="#2A4F94" /><text x="792" y="161" font-size="12" fill="#FFFFFF"
+            font-family="sans-serif">Baixo</text>
+          <circle cx="852" cy="157" r="5" fill="#2F66D6" /><text x="864" y="161" font-size="12" fill="#FFFFFF"
+            font-family="sans-serif">Moderado</text>
+          <circle cx="946" cy="157" r="5" fill="#5B97FF" /><text x="958" y="161" font-size="12" fill="#FFFFFF"
+            font-family="sans-serif">Alto</text>
+
+          <!-- Botão Layer (Mapa/Satélite) -->
+          <rect x="1236" y="140" width="164" height="34" rx="8" fill="#0B1B3A" fill-opacity=".85" stroke="#27447F" />
+          <rect x="1240" y="144" width="74" height="26" rx="6" fill="#FFFFFF" />
+          <text x="1277" y="162" text-anchor="middle" font-size="12" font-weight="600" fill="#0B1B3A"
+            font-family="sans-serif">Mapa</text>
+          <text x="1358" y="162" text-anchor="middle" font-size="12" fill="#FFFFFF"
+            font-family="sans-serif">Satélite</text>
+
+          <!-- Tooltip Brasilândia -->
+          <polygon points="964,334 956,340 964,346" fill="#FFFFFF" />
+          <rect x="964" y="270" width="200" height="94" rx="10" fill="#FFFFFF" />
+          <text x="982" y="296" font-size="16" font-weight="700" fill="#0B1B3A"
+            font-family="sans-serif">Brasilândia</text>
+          <text x="982" y="314" font-size="12" fill="#4A5B7A" font-family="sans-serif">São Paulo</text>
+          <rect x="982" y="326" width="76" height="22" rx="4" fill="#0B1B3A" />
+          <text x="1020" y="341" text-anchor="middle" font-size="12" font-weight="600" fill="#FFFFFF"
+            font-family="sans-serif">Risco Alto</text>
+          <text x="1146" y="343" text-anchor="end" font-size="20" font-weight="800" fill="#1457D9"
+            font-family="sans-serif">91 mm</text>
+        </svg>
       </div>
     </section>
 
-    <section class="section" aria-labelledby="titulo-problema">
-      <div class="container grid problem-grid">
+    <!-- CARDS SOBREPOSTOS -->
+    <div class="container hero-overlap">
+      <div class="overlap-grid">
+        <div class="overlap-card">
+          <h4>Brasilândia</h4>
+          <span class="stat">Alto</span>
+          <p>Risco atual de chuva intensa</p>
+        </div>
+        <div class="overlap-card">
+          <h4>Itaquera</h4>
+          <span class="stat">Moderado</span>
+          <p>Atenção nas próximas horas</p>
+        </div>
+        <div class="overlap-card">
+          <h4>Vila Maria</h4>
+          <span class="stat">Baixo</span>
+          <p>Condição climática estável</p>
+        </div>
+        <div class="overlap-card">
+          <h4>Lapa</h4>
+          <span class="stat">Baixo</span>
+          <p>Condição climática estável</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- O PROBLEMA -->
+    <section class="section">
+      <div class="container problem-grid">
+        <div class="problem-visual">
+          <svg viewBox="120 980 500 380" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+            <rect x="120" y="980" width="500" height="380" rx="18" fill="#EAF2FF" />
+            <text x="148" y="1112" font-size="128" font-weight="800" fill="#1457D9" letter-spacing="-5"
+              font-family="sans-serif">8,2</text>
+            <text x="396" y="1112" font-size="40" font-weight="700" fill="#0B1B3A" letter-spacing="-1"
+              font-family="sans-serif">milhões</text>
+            <g font-size="17" fill="#0B1B3A" font-family="sans-serif">
+              <text x="152" y="1162">de pessoas viviam em áreas de risco de</text>
+              <text x="152" y="1188">deslizamentos, inundações e enxurradas nos</text>
+              <text x="152" y="1214">municípios monitorados pelo Cemaden, segundo</text>
+              <text x="152" y="1240">estimativa baseada no Censo 2010.</text>
+            </g>
+            <line x1="152" y1="1268" x2="588" y2="1268" stroke="#BFD2F2" />
+            <text x="152" y="1296" font-size="13" fill="#4A5B7A" font-family="sans-serif">Fonte: IBGE e Cemaden,
+              População em Áreas de Risco</text>
+            <text x="152" y="1316" font-size="13" fill="#4A5B7A" font-family="sans-serif">no Brasil, 2018.
+              <a href="https://www.ibge.gov.br/apps/populacaoareasderisco/" target="_blank">
+                <tspan fill="#1457D9" text-decoration="underline" font-weight="600" style="cursor: pointer;">Acessar a
+                  fonte original (abre em nova aba)</tspan>
+              </a>
+            </text>
+          </svg>
+        </div>
         <div>
-          <h2 id="titulo-problema">O problema</h2>
-          <p class="lead">Quem mora perto de encostas ou em áreas que alagam muitas vezes descobre o risco só quando a chuva já começou.</p>
+          <h2 class="section-title">O problema</h2>
+          <p>Quem mora perto de encostas ou em áreas que alagam muitas vezes descobre o risco só quando a chuva já
+            começou.</p>
           <ul class="problem-list">
-            <li>Enchentes que atingem casas, ruas e serviços essenciais.</li>
-            <li>Alagamentos urbanos que bloqueiam o deslocamento e isolam bairros.</li>
+            <li>Enchentes que atingem casas e serviços essenciais.</li>
+            <li>Alagamentos urbanos que bloqueiam o deslocamento.</li>
             <li>Deslizamentos de terra em encostas ocupadas.</li>
-            <li>Falta de informação preventiva clara e em linguagem simples.</li>
-            <li>Dificuldade de saber, de forma rápida, qual é o risco no próprio bairro.</li>
+            <li>Falta de informação preventiva clara.</li>
           </ul>
-        </div>
-        <figure class="stat">
-          <p class="stat-number">8,2 milhões</p>
-          <p>de pessoas viviam em áreas de risco de deslizamentos, inundações e enxurradas nos municípios monitorados pelo Cemaden, segundo estimativa baseada no Censo 2010.</p>
-          <figcaption class="stat-source">Fonte: IBGE e Cemaden, <cite>População em Áreas de Risco no Brasil</cite>, 2018. <a href="https://www.ibge.gov.br/apps/populacaoareasderisco/" target="_blank" rel="noopener noreferrer">Acessar a fonte original (abre em nova aba)</a>.</figcaption>
-        </figure>
-      </div>
-    </section>
 
-    <section class="section" aria-labelledby="titulo-recursos">
-      <div class="container">
-        <div class="section-head">
-          <h2 id="titulo-recursos">O que você encontra no painel</h2>
-          <p class="lead">Três ferramentas para acompanhar o risco e agir com a comunidade.</p>
-        </div>
-        <div class="grid grid-3">
-          <article class="card"><div class="feature-icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-map"/></svg></div><h3>Mapa inteligente</h3><p>Bairros marcados por nível de risco, com visão padrão ou por satélite e detalhes ao clicar.</p></article>
-          <article class="card"><div class="feature-icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-alert"/></svg></div><h3>Registro comunitário</h3><p>Moradores relatam alagamentos, deslizamentos e vias interditadas. Todo relato é identificado como não verificado.</p></article>
-          <article class="card"><div class="feature-icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-bell"/></svg></div><h3>Alertas personalizados</h3><p>Escolha seus bairros, veja o nível de alerta e o histórico. No protótipo, os alertas são simulados dentro do aplicativo.</p></article>
+          <div class="problem-stat">
+            <div class="number">8,2 milhões</div>
+            <p>de pessoas viviam em áreas de risco segundo estimativa do Cemaden e IBGE.</p>
+          </div>
         </div>
       </div>
     </section>
 
-    <section class="section section-alt" aria-labelledby="titulo-solucao">
+    <!-- O QUE VOCÊ ENCONTRA -->
+    <section class="section">
       <div class="container">
-        <div class="section-head">
-          <h2 id="titulo-solucao">Como o AlertaBairro funciona</h2>
-          <p class="lead">Cinco passos para transformar informação em prevenção.</p>
-        </div>
-        <ol class="steps">
-          <li><strong>Consulte os indicadores por bairro.</strong> Veja chuva e temperatura de cada localidade.</li>
-          <li><strong>Visualize o nível de risco.</strong> Badges e cores indicam risco baixo, moderado ou alto.</li>
-          <li><strong>Identifique as áreas que exigem atenção.</strong> Filtros ajudam a encontrar rapidamente os bairros de risco alto.</li>
-          <li><strong>Acompanhe alertas e registre relatos.</strong> No protótipo, alertas e inscrição são demonstrativos.</li>
-          <li><strong>Prepare a comunidade.</strong> Orientações práticas incentivam a prevenção e a colaboração entre vizinhos.</li>
-        </ol>
-        <div class="btn-row">
-          <a class="btn btn-primary" href="solucao.html">Explorar o painel</a>
+        <h2 class="section-title text-center" style="margin-bottom: 60px;">O que você encontra no painel</h2>
+        <div class="features-grid">
+          <div>
+            <div class="feature-item">
+              <div class="icon-box"><svg>
+                  <use href="#i-map" />
+                </svg></div>
+              <div>
+                <h3>Mapa inteligente</h3>
+                <p>Bairros por nível de risco, com mapas de satélite e detalhes da sua região.</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="icon-box"><svg>
+                  <use href="#i-alert" />
+                </svg></div>
+              <div>
+                <h3>Registro comunitário</h3>
+                <p>Moradores relatam alagamentos, deslizamentos e vias interditadas na hora.</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="icon-box"><svg>
+                  <use href="#i-bell" />
+                </svg></div>
+              <div>
+                <h3>Alertas personalizados</h3>
+                <p>Escolha seus bairros, veja o nível de alerta e o histórico das chuvas.</p>
+              </div>
+            </div>
+          </div>
+          <div class="features-mockup">
+            <svg viewBox="600 1500 720 500" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <filter id="shMock" x="-10%" y="-10%" width="120%" height="130%">
+                  <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#0B1B3A" flood-opacity=".18" />
+                </filter>
+                <clipPath id="mapMock">
+                  <rect x="800" y="1540" width="520" height="460" />
+                </clipPath>
+                <pattern id="gridL" width="40" height="40" patternUnits="userSpaceOnUse" patternTransform="rotate(-16)">
+                  <path d="M40 0H0V40" fill="none" stroke="#C5D6F1" stroke-width="1" />
+                </pattern>
+              </defs>
+
+              <rect x="600" y="1500" width="720" height="500" rx="14" fill="#FFFFFF" stroke="#D0DDF3"
+                filter="url(#shMock)" />
+              <path d="M600,1540 V1514 A14,14 0 0 1 614,1500 H1306 A14,14 0 0 1 1320,1514 V1540 Z" fill="#EEF3FB" />
+              <circle cx="624" cy="1520" r="5" fill="#C5D4EE" />
+              <circle cx="642" cy="1520" r="5" fill="#C5D4EE" />
+              <circle cx="660" cy="1520" r="5" fill="#C5D4EE" />
+              <rect x="700" y="1508" width="300" height="24" rx="12" fill="#FFFFFF" />
+              <text x="850" y="1524" text-anchor="middle" font-size="12" fill="#4A5B7A"
+                font-family="sans-serif">AlertaBairro · Painel de monitoramento</text>
+              <line x1="600" y1="1540" x2="1320" y2="1540" stroke="#D8E3F5" />
+              <line x1="800" y1="1540" x2="800" y2="2000" stroke="#D8E3F5" />
+
+              <!-- Lista lateral -->
+              <text x="620" y="1572" font-size="15" font-weight="700" fill="#0B1B3A"
+                font-family="sans-serif">Bairros</text>
+              <rect x="704" y="1556" width="76" height="24" rx="12" fill="#EAF2FF" />
+              <text x="742" y="1572" text-anchor="middle" font-size="11" font-weight="600" fill="#1457D9"
+                font-family="sans-serif">Risco alto</text>
+
+              <rect x="600" y="1590" width="200" height="84" fill="#EAF2FF" />
+              <rect x="600" y="1590" width="3" height="84" fill="#1457D9" />
+              <text x="620" y="1624" font-size="15" font-weight="700" fill="#0B1B3A"
+                font-family="sans-serif">Brasilândia</text>
+              <text x="620" y="1644" font-size="12" fill="#4A5B7A" font-family="sans-serif">São Paulo</text>
+              <text x="780" y="1624" text-anchor="end" font-size="14" font-weight="700" fill="#1457D9"
+                font-family="sans-serif">91 mm</text>
+              <rect x="716" y="1636" width="64" height="18" rx="4" fill="#0B1B3A" /><text x="748" y="1649"
+                text-anchor="middle" font-size="10" font-weight="600" fill="#FFFFFF" font-family="sans-serif">Risco
+                Alto</text>
+
+              <line x1="600" y1="1674" x2="800" y2="1674" stroke="#E3ECFA" />
+              <text x="620" y="1708" font-size="15" font-weight="700" fill="#0B1B3A"
+                font-family="sans-serif">Liberdade</text>
+              <text x="620" y="1728" font-size="12" fill="#4A5B7A" font-family="sans-serif">Salvador</text>
+              <text x="780" y="1708" text-anchor="end" font-size="14" font-weight="700" fill="#1457D9"
+                font-family="sans-serif">88,1 mm</text>
+              <rect x="716" y="1720" width="64" height="18" rx="4" fill="#0B1B3A" /><text x="748" y="1733"
+                text-anchor="middle" font-size="10" font-weight="600" fill="#FFFFFF" font-family="sans-serif">Risco
+                Alto</text>
+
+              <line x1="600" y1="1758" x2="800" y2="1758" stroke="#E3ECFA" />
+              <text x="620" y="1792" font-size="15" font-weight="700" fill="#0B1B3A" font-family="sans-serif">Jardim
+                Ângela</text>
+              <text x="620" y="1812" font-size="12" fill="#4A5B7A" font-family="sans-serif">São Paulo</text>
+              <text x="780" y="1792" text-anchor="end" font-size="14" font-weight="700" fill="#1457D9"
+                font-family="sans-serif">82,5 mm</text>
+              <rect x="716" y="1804" width="64" height="18" rx="4" fill="#0B1B3A" /><text x="748" y="1817"
+                text-anchor="middle" font-size="10" font-weight="600" fill="#FFFFFF" font-family="sans-serif">Risco
+                Alto</text>
+
+              <line x1="600" y1="1842" x2="800" y2="1842" stroke="#E3ECFA" />
+              <text x="620" y="1876" font-size="15" font-weight="700" fill="#0B1B3A"
+                font-family="sans-serif">Ibura</text>
+              <text x="620" y="1896" font-size="12" fill="#4A5B7A" font-family="sans-serif">Recife</text>
+              <text x="780" y="1876" text-anchor="end" font-size="14" font-weight="700" fill="#1457D9"
+                font-family="sans-serif">79,8 mm</text>
+              <rect x="716" y="1888" width="64" height="18" rx="4" fill="#0B1B3A" /><text x="748" y="1901"
+                text-anchor="middle" font-size="10" font-weight="600" fill="#FFFFFF" font-family="sans-serif">Risco
+                Alto</text>
+
+              <rect x="620" y="1944" width="160" height="38" rx="8" fill="#1457D9" />
+              <text x="700" y="1968" text-anchor="middle" font-size="13" font-weight="600" fill="#FFFFFF"
+                font-family="sans-serif">+ Registrar relato</text>
+
+              <!-- Área do Mapa -->
+              <g clip-path="url(#mapMock)">
+                <rect x="800" y="1540" width="520" height="460" fill="#DCE8FA" />
+                <rect x="800" y="1540" width="520" height="460" fill="url(#gridL)" />
+                <g transform="translate(277.2 1456.4) scale(.72)" stroke="#FFFFFF" stroke-width="3.5"
+                  stroke-linejoin="round">
+                  <polygon points="700,290 740,290 800,350 740,470 700,470" fill="#BCD3F7" />
+                  <polygon points="740,290 760,200 880,170 960,230 930,330 800,350" fill="#6D9AF0" />
+                  <polygon points="880,170 1040,150 1100,240 1020,310 960,230" fill="#BCD3F7" />
+                  <polygon points="960,230 1020,310 1000,420 900,440 930,330" fill="#1457D9" />
+                  <polygon points="800,350 930,330 900,440 840,520 740,470" fill="#1457D9" />
+                  <polygon points="1100,240 1240,210 1300,300 1230,380 1130,360 1020,310" fill="#6D9AF0" />
+                  <polygon points="1000,420 1020,310 1130,360 1180,470 1090,540 990,520" fill="#1457D9" />
+                  <polygon points="1230,380 1300,300 1440,330 1440,470 1320,500 1180,470 1130,360" fill="#BCD3F7" />
+                  <polygon points="900,440 1000,420 990,520 960,620 860,600 840,520" fill="#6D9AF0" />
+                  <polygon points="990,520 1090,540 1120,650 1030,700 960,620" fill="#BCD3F7" />
+                  <polygon points="1090,540 1180,470 1320,500 1300,620 1200,680 1120,650" fill="#1457D9" />
+                  <polygon points="700,470 740,470 840,520 860,600 800,690 700,670" fill="#BCD3F7" />
+                  <polygon points="1320,500 1440,470 1440,640 1300,620" fill="#6D9AF0" />
+                </g>
+                <circle cx="961" cy="1701" r="16" fill="#FFFFFF" opacity=".5" />
+                <circle cx="961" cy="1701" r="7" fill="#FFFFFF" stroke="#0B1B3A" stroke-width="3" />
+              </g>
+
+              <!-- Controles mapa mock -->
+              <rect x="820" y="1556" width="170" height="34" rx="8" fill="#FFFFFF" stroke="#D0DDF3" />
+              <rect x="824" y="1560" width="70" height="26" rx="6" fill="#EAF2FF" />
+              <text x="859" y="1578" text-anchor="middle" font-size="12" font-weight="600" fill="#1457D9"
+                font-family="sans-serif">Mapa</text>
+              <text x="942" y="1578" text-anchor="middle" font-size="12" fill="#4A5B7A"
+                font-family="sans-serif">Satélite</text>
+
+              <!-- Card do Mockup -->
+              <rect x="1080" y="1820" width="224" height="162" rx="12" fill="#FFFFFF" filter="url(#shMock)" />
+              <text x="1100" y="1850" font-size="17" font-weight="700" fill="#0B1B3A"
+                font-family="sans-serif">Brasilândia</text>
+              <text x="1100" y="1870" font-size="12" fill="#4A5B7A" font-family="sans-serif">São Paulo</text>
+              <rect x="1212" y="1836" width="74" height="22" rx="4" fill="#0B1B3A" />
+              <text x="1249" y="1851" text-anchor="middle" font-size="12" font-weight="600" fill="#FFFFFF"
+                font-family="sans-serif">Risco Alto</text>
+              <text x="1100" y="1922" font-size="34" font-weight="800" fill="#1457D9" letter-spacing="-1"
+                font-family="sans-serif">91 mm</text>
+              <text x="1100" y="1960" font-size="13" font-weight="600" fill="#1457D9" font-family="sans-serif">Ver
+                detalhes do bairro →</text>
+            </svg>
+          </div>
         </div>
       </div>
     </section>
 
-    <section class="section" aria-labelledby="titulo-beneficiarios">
+    <!-- COMO FUNCIONA (Timeline) -->
+    <section class="section steps-section">
       <div class="container">
-        <div class="section-head">
-          <h2 id="titulo-beneficiarios">Quem se beneficia</h2>
-        </div>
-        <div class="grid grid-3">
-          <article class="card"><h3>Moradores de áreas vulneráveis</h3><p>Acesso simples a informações de risco do próprio bairro.</p></article>
-          <article class="card"><h3>Comunidades periféricas</h3><p>Comunicação preventiva em linguagem direta, pensada para o uso no celular.</p></article>
-          <article class="card"><h3>Famílias perto de encostas e áreas alagáveis</h3><p>Orientações para decidir com antecedência o que fazer em dias de chuva forte.</p></article>
-          <article class="card"><h3>Lideranças comunitárias</h3><p>Um painel para conversar com vizinhos sobre prevenção e organização local.</p></article>
-          <article class="card"><h3>Pessoas interessadas em prevenção climática</h3><p>Um ponto de partida para entender riscos e acompanhar fontes oficiais.</p></article>
+        <h2 class="section-title">Como o AlertaBairro funciona</h2>
+        <p style="color: var(--text-muted); margin-bottom: 40px;">Cinco passos para transformar informação em prevenção.
+        </p>
+
+        <div class="timeline">
+          <div class="step">
+            <div class="step-dot">1</div>
+            <h4>Consulte indicadores</h4>
+            <p>Veja chuva e temperatura do local.</p>
+          </div>
+          <div class="step">
+            <div class="step-dot">2</div>
+            <h4>Nível de risco</h4>
+            <p>Cores indicam baixo, moderado ou alto.</p>
+          </div>
+          <div class="step">
+            <div class="step-dot">3</div>
+            <h4>Filtre áreas</h4>
+            <p>Encontre os bairros em estado de atenção.</p>
+          </div>
+          <div class="step">
+            <div class="step-dot">4</div>
+            <h4>Acompanhe alertas</h4>
+            <p>Cadastre-se para relatos da vizinhança.</p>
+          </div>
+          <div class="step">
+            <div class="step-dot">5</div>
+            <h4>Comunidade</h4>
+            <p>Orientações práticas para prevenção local.</p>
+          </div>
         </div>
       </div>
     </section>
 
-    <section class="section section-alt" aria-labelledby="titulo-ods">
-      <div class="container">
-        <div class="section-head">
-          <h2 id="titulo-ods">Indicadores e ODS</h2>
+    <!-- QUEM SE BENEFICIA -->
+    <section class="section">
+      <div class="container bene-grid">
+        <svg viewBox="120 2700 400 480" width="100%" height="100%" preserveAspectRatio="xMidYMid slice"
+          xmlns="http://www.w3.org/2000/svg" style="border-radius: 12px;">
+          <defs>
+            <g id="house">
+              <rect x="0" y="0" width="28" height="22" fill="#EAF2FF" />
+              <polygon points="-3,0 14,-13 31,0" fill="#8DB6FF" />
+              <rect x="11" y="9" width="7" height="13" fill="#1457D9" />
+            </g>
+          </defs>
+          <rect x="120" y="2700" width="400" height="480" fill="#1457D9" />
+          <path d="M120,3180 V3040 C220,2990 320,3010 420,2950 S500,2930 520,2920 V3180 Z" fill="#0F46B5" />
+          <path d="M120,3180 V3100 C240,3070 360,3110 520,3060 V3180 Z" fill="#0B3A98" />
+          <use href="#house" transform="translate(160 3030)" />
+          <use href="#house" transform="translate(212 3020)" />
+          <use href="#house" transform="translate(270 3004)" />
+          <use href="#house" transform="translate(330 2998)" />
+          <use href="#house" transform="translate(388 2972)" />
+          <use href="#house" transform="translate(448 2952)" />
+          <use href="#house" transform="translate(150 3112)" />
+          <use href="#house" transform="translate(236 3104) scale(1.2)" />
+          <use href="#house" transform="translate(336 3108)" />
+          <use href="#house" transform="translate(430 3086) scale(1.1)" />
+          <g fill="none" stroke="#8DB6FF" stroke-width="2" opacity=".9">
+            <circle cx="402" cy="2940" r="6" fill="#FFFFFF" stroke="none" />
+            <circle cx="402" cy="2940" r="13" opacity=".7" />
+            <circle cx="402" cy="2940" r="21" opacity=".4" />
+            <circle cx="284" cy="2972" r="5" fill="#FFFFFF" stroke="none" />
+            <circle cx="284" cy="2972" r="11" opacity=".7" />
+            <circle cx="284" cy="2972" r="18" opacity=".4" />
+          </g>
+        </svg>
+        <div class="bene-list">
+          <h2 class="section-title">Quem se beneficia</h2>
+          <div class="bene-list-item">
+            <h3>Moradores de áreas vulneráveis</h3>
+            <p>Acesso simples a informações de risco do próprio bairro.</p>
+          </div>
+          <div class="bene-list-item">
+            <h3>Comunidades periféricas</h3>
+            <p>Comunicação preventiva em linguagem direta no celular.</p>
+          </div>
+          <div class="bene-list-item">
+            <h3>Famílias em áreas de encostas</h3>
+            <p>Orientações para decidir com antecedência o que fazer.</p>
+          </div>
+          <div class="bene-list-item">
+            <h3>Lideranças comunitárias</h3>
+            <p>Painel para organizar a prevenção no nível hiperlocal.</p>
+          </div>
         </div>
-        <div class="grid grid-2">
-          <article class="card">
+      </div>
+    </section>
+
+    <!-- ODS -->
+    <section class="section">
+      <div class="container">
+        <div class="ods-header">
+          <div>
+            <h2 class="section-title" style="margin-bottom: 0;">Indicadores e ODS</h2>
+          </div>
+          <a class="btn btn-primary" href="impacto.html">Ver impacto detalhado</a>
+        </div>
+
+        <div class="ods-grid">
+          <div class="ods-card blue">
             <h3>ODS 13: Ação contra a Mudança Global do Clima</h3>
-            <p>O AlertaBairro apoia a adaptação climática ao ampliar o acesso à informação sobre riscos e fortalecer a capacidade da comunidade de se preparar para eventos extremos.</p>
-          </article>
-          <article class="card">
+            <p>Apoia a adaptação climática ao ampliar o acesso à informação sobre riscos e fortalecer a capacidade de
+              preparo comunitário.</p>
+          </div>
+          <div class="ods-card dark">
             <h3>ODS 11: Cidades e Comunidades Sustentáveis</h3>
-            <p>Ao reduzir a vulnerabilidade de moradores, o projeto contribui para cidades mais seguras e resilientes.</p>
-          </article>
-        </div>
-        <div class="btn-row">
-          <a class="btn btn-secondary" href="impacto.html">Ver impacto e referências</a>
+            <p>Ao reduzir a vulnerabilidade de moradores, o projeto contribui para assentamentos urbanos mais seguros e
+              resilientes.</p>
+          </div>
         </div>
       </div>
     </section>
 
-    <section class="section" aria-labelledby="titulo-cta">
+    <!-- CTA FOOTER -->
+    <section class="section" style="padding-top: 0;">
       <div class="container">
-        <div class="cta-band">
-          <h2 id="titulo-cta">Conheça o risco do seu bairro</h2>
-          <p>Explore os dados demonstrativos e teste o cadastro de alertas.</p>
-          <a class="btn btn-primary" href="solucao.html">Abrir monitoramento</a>
+        <div class="cta-banner">
+          <div class="cta-content">
+            <h2>Conheça o risco do seu bairro</h2>
+            <p>Explore os dados demonstrativos e teste o cadastro de alertas na plataforma.</p>
+            <a class="btn btn-light" href="solucao.html">Abrir monitoramento</a>
+          </div>
+          <div class="cta-graphic"></div>
         </div>
       </div>
     </section>
@@ -186,26 +537,32 @@
       <div class="footer-grid">
         <div>
           <h2>AlertaBairro</h2>
-          <p>Plataforma comunitária de monitoramento climático e comunicação preventiva. Projeto acadêmico demonstrativo.</p>
+          <p>Plataforma comunitária de monitoramento climático e comunicação preventiva. Projeto acadêmico
+            demonstrativo.</p>
         </div>
-        <nav aria-label="Navegação do rodapé">
+        <nav aria-label="Navegação">
           <h2>Navegação</h2>
           <ul class="footer-links">
             <li><a href="index.html">Início</a></li>
             <li><a href="solucao.html">Solução</a></li>
             <li><a href="impacto.html">Impacto e ODS</a></li>
-            <li><a href="equipe.html">Equipe</a></li>
           </ul>
         </nav>
         <div>
-          <h2>Identificação acadêmica</h2>
-          <p>FIAP<br>Global Solution 2026/2<br>Tema: CitizenTech</p>
+          <h2>Identificação</h2>
+          <ul class="footer-links">
+            <li>FIAP</li>
+            <li>Global Solution 2026/2</li>
+            <li>Tema: CitizenTech</li>
+          </ul>
         </div>
       </div>
       <div class="footer-note">
-        <p>Os indicadores climáticos exibidos são simulados para fins acadêmicos e não substituem alertas oficiais da Defesa Civil, do Cemaden ou do INMET.</p>
+        <p>Os indicadores climáticos exibidos são simulados para fins acadêmicos e não substituem alertas oficiais da
+          Defesa Civil, do Cemaden ou do INMET.</p>
       </div>
     </div>
   </footer>
 </body>
+
 </html>
