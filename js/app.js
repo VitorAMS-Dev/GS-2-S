@@ -1084,17 +1084,20 @@
     const card = el("article", `card-bairro risco-${cls}`);
     card.setAttribute("aria-label", `${b.nome}, ${b.cidade}: risco ${b.risco} (dado simulado)`);
     const topo = el("div", "card-top");
-    topo.append(el("h3", "", b.nome), el("span", `badge badge-${cls}`, `Risco ${b.risco}`));
-    const medidas = el("dl", "medidas");
-    [["Chuva (simulada)", `${fmt(b.chuva)} mm`], ["Temperatura (simulada)", `${fmt(b.temperatura)} °C`]].forEach(([t, v]) => {
-      const d = el("div"); d.append(el("dt", "", t), el("dd", "", v)); medidas.append(d);
-    });
+    const titulo = el("div", "card-titulo");
+    titulo.append(el("h3", "", b.nome), el("p", "cidade", b.cidade));
+    topo.append(titulo, el("span", `badge badge-${cls}`, `Risco ${b.risco}`));
+    const chuva = el("div", "mon-chuva");
+    chuva.append(el("span", "mon-chuva-rotulo", "Chuva (simulada)"), el("strong", "mon-chuva-valor", `${fmt(b.chuva)} mm`));
+    const temp = el("div", "mon-temp");
+    temp.append(el("span", "mon-chuva-rotulo", "Temperatura (simulada)"), el("strong", "", `${fmt(b.temperatura)} °C`));
+    const medidas = el("div", "medidas"); medidas.append(chuva, temp);
     const barra = el("div", "barra"); barra.setAttribute("aria-hidden", "true");
     const pre = el("span"); pre.style.width = `${Math.min(100, (b.chuva / 120) * 100)}%`; barra.append(pre);
     const acoes = el("div", "card-actions");
-    acoes.append(botao("Ver no mapa", "btn-secondary btn-sm", () => focarBairro(b.id), "map"),
+    acoes.append(botao("Ver no mapa", "btn-primary btn-sm", () => focarBairro(b.id), "map"),
                  botao("Registrar relato", "btn-secondary btn-sm", () => { preencherBairroRelato(b.id); irPara("ocorrencias"); }, "plus"));
-    card.append(topo, el("p", "cidade", b.cidade), medidas, barra, el("p", "orientacao", b.orientacao), el("p", "simulado", "Dado demonstrativo, não é alerta oficial."), acoes);
+    card.append(topo, medidas, barra, el("p", "orientacao", b.orientacao), el("p", "simulado", "Dado demonstrativo, não é alerta oficial."), acoes);
     return card;
   }
 
@@ -1103,6 +1106,8 @@
     const lista = bairrosVisiveis().filter((b) => (!busca || normalizarTexto(b.nome).includes(busca)) && (!state.filtroMon.risco || b.risco === state.filtroMon.risco));
     $("#cards-bairros").replaceChildren(...lista.map(cardBairro));
     $("#estado-vazio-mon").hidden = lista.length > 0;
+    const todos = bairrosVisiveis();
+    ["alto", "moderado", "baixo"].forEach((n) => { $(`#mon-n-${n}`).textContent = String(todos.filter((b) => classe(b.risco) === n).length); });
     $("#contagem-mon").textContent = lista.length === 1 ? "Exibindo 1 bairro." : `Exibindo ${lista.length} de ${bairrosVisiveis().length} bairros.`;
   }
 
@@ -1288,6 +1293,7 @@
     if (!compacto) main.append(el("p", "row-sub", a.mensagem));
     main.append(el("p", "row-sub", `Alerta simulado, ${tempoRelativo(a.data)}`));
     item.append(main);
+    if (!compacto && !a.lido) item.append(el("span", "tag-nao-lido", "Não lido"));
     li.append(item);
     return li;
   }
@@ -1320,24 +1326,32 @@
     const valor = state.alertaBairro;
     const b = bairroPorId(valor);
     const atual = $("#alerta-atual"); atual.replaceChildren();
+    const ico = el("span", "alt-ico"); ico.setAttribute("aria-hidden", "true"); ico.append(icone("bell"));
+    const corpo = el("div", "alt-atual-corpo");
     if (b) {
       const nivel = RISCO_PARA_NIVEL[b.risco];
-      atual.className = `card alert-now nivel-${nivel}`;
-      const cab = el("div", "card-head");
-      cab.append(el("h2", "", `${b.nome}, ${b.cidade}`), el("span", `badge badge-${nivel}`, NIVEIS_ALERTA[nivel]));
-      atual.append(cab,
+      atual.className = `alt-atual alert-now nivel-${nivel}`;
+      const cab = el("div", "alt-atual-cab");
+      cab.append(el("h3", "", `${b.nome}, ${b.cidade}`), el("span", `badge badge-${nivel}`, NIVEIS_ALERTA[nivel]));
+      corpo.append(cab,
         el("p", "", `Chuva simulada: ${fmt(b.chuva)} mm. Temperatura simulada: ${fmt(b.temperatura)} °C. Nível de risco: ${b.risco}.`),
         el("p", "", b.orientacao),
         el("p", "simulado", "Alerta simulado para demonstração. Não é alerta oficial."));
     } else {
-      atual.className = "card";
-      atual.append(el("h2", "", "Escolha um bairro"), el("p", "muted", "Selecione um bairro para ver o alerta atual, o nível de risco e as orientações preventivas."));
+      atual.className = "alt-atual vazio";
+      corpo.append(el("h3", "", "Escolha um bairro"), el("p", "", "Selecione um bairro para ver o alerta atual, o nível de risco e as orientações preventivas."));
     }
+    atual.append(ico, corpo);
     const lista = $("#alerta-historico"); lista.replaceChildren();
     const historico = state.alertas.filter((a) => (!valor || String(a.bairroId) === valor) && (!state.cidade || (bairroPorId(a.bairroId) || {}).cidade === state.cidade))
       .slice().sort((a, b) => new Date(b.data) - new Date(a.data));
     $("#estado-vazio-alt").hidden = historico.length > 0;
     historico.forEach((a) => lista.append(itemAlerta(a, false)));
+    const naoLidosHist = historico.filter((a) => !a.lido).length;
+    $("#alt-contagem").textContent = `${historico.length} ${historico.length === 1 ? "alerta" : "alertas"} · ${naoLidosHist} ${naoLidosHist === 1 ? "não lido" : "não lidos"}`;
+    const contagem = { elevado: 0, atencao: 0, informativo: 0 };
+    alertasRelevantes().forEach((a) => { if (a.nivel in contagem) contagem[a.nivel] += 1; });
+    Object.keys(contagem).forEach((n) => { $(`#alt-n-${n}`).textContent = String(contagem[n]); });
   }
 
   function simularAtualizacao() {

@@ -9,10 +9,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
   <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
-  <link rel="stylesheet" href="css/style.css">
-  <script src="js/main.js" defer></script>
-  <script src="js/mapa.js" defer></script>
-  <script src="js/app.js" defer></script>
+  <link rel="stylesheet" href="css/style.css?v=4">
+  <script src="js/main.js?v=4" defer></script>
+  <script src="js/mapa.js?v=4" defer></script>
+  <script src="js/app.js?v=4" defer></script>
 </head>
 <body class="app" id="app-root">
   <svg class="sprite" aria-hidden="true" focusable="false">
@@ -44,12 +44,14 @@
 
   <a class="sos-btn" id="btn-sos" href="#fuga"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-exit"/></svg><span>Preciso sair agora</span></a>
 
+  <div class="notice-bar">Projeto acadêmico demonstrativo · Os dados exibidos são simulados</div>
+
   <header class="site-header">
     <div class="container header-inner">
       <a class="brand" href="index.html" aria-label="AlertaBairro, página inicial">
         <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-          <path d="M16 2C16 2 6 13.5 6 20a10 10 0 0 0 20 0C26 13.5 16 2 16 2Z" fill="#8dc3ea"/>
-          <path d="M11 20.5l3.5 3.5 7-7.5" fill="none" stroke="#0b2545" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M16 2C16 2 6 13.5 6 20a10 10 0 0 0 20 0C26 13.5 16 2 16 2Z" fill="#2563eb" />
+          <path d="M11 20.5l3.5 3.5 7-7.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
         <span>AlertaBairro</span>
       </a>
@@ -73,7 +75,7 @@
     <aside class="sidebar" id="sidebar" aria-label="Seções do painel">
       <div class="sidebar-top">
         <a class="brand" href="index.html" aria-label="AlertaBairro, voltar ao site">
-          <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M16 2C16 2 6 13.5 6 20a10 10 0 0 0 20 0C26 13.5 16 2 16 2Z" fill="#8dc3ea"/><path d="M11 20.5l3.5 3.5 7-7.5" fill="none" stroke="#0b2545" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M16 2C16 2 6 13.5 6 20a10 10 0 0 0 20 0C26 13.5 16 2 16 2Z" fill="#2563eb"/><path d="M11 20.5l3.5 3.5 7-7.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
           <span>AlertaBairro</span>
         </a>
         <button class="sidebar-close" id="sidebar-fechar" type="button" aria-label="Fechar menu"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-x"/></svg></button>
@@ -86,7 +88,6 @@
           <li><a href="#mapa" data-nav="mapa"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-map"/></svg> Mapa inteligente</a></li>
           <li><a href="#ocorrencias" data-nav="ocorrencias"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-alert"/></svg> Ocorrências <span class="nav-count" id="nav-count-ocorrencias" hidden>0</span></a></li>
           <li><a href="#alertas" data-nav="alertas"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-bell"/></svg> Alertas <span class="nav-count" id="nav-count-alertas" hidden>0</span></a></li>
-          <li><a href="#comunidade" data-nav="comunidade"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-users"/></svg> Comunidade</a></li>
           <li><a href="#configuracoes" data-nav="configuracoes"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-settings"/></svg> Configurações</a></li>
         </ul>
       </nav>
@@ -212,13 +213,22 @@
         </section>
 
         <section class="view" id="view-monitoramento" data-view="monitoramento" hidden>
-          <div class="view-head">
-            <h2>Monitoramento por bairro</h2>
-            <p>Consulte nível de risco, chuva e temperatura (simulados) e as orientações de cada bairro.</p>
+          <div class="mon-hero">
+            <div class="view-head">
+              <p class="mon-eyebrow">Monitoramento</p>
+              <h2>Monitoramento por bairro</h2>
+              <p>Consulte nível de risco, chuva e temperatura (simulados) e as orientações de cada bairro.</p>
+            </div>
+            <ul class="mon-resumo" aria-label="Resumo por nível de risco">
+              <li class="alto"><span class="mon-num" id="mon-n-alto">0</span><span>Risco alto</span></li>
+              <li class="moderado"><span class="mon-num" id="mon-n-moderado">0</span><span>Risco moderado</span></li>
+              <li class="baixo"><span class="mon-num" id="mon-n-baixo">0</span><span>Risco baixo</span></li>
+            </ul>
           </div>
           <div class="notice" role="note"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-info"/></svg><p><strong>Dados simulados.</strong> Os bairros são referências reais, mas os indicadores são inventados para fins acadêmicos.</p></div>
-          <form class="toolbar" role="search" aria-label="Filtrar bairros" novalidate>
-            <div class="field"><label for="mon-busca">Buscar bairro pelo nome</label><input type="search" id="mon-busca" placeholder="Ex.: Ibura" autocomplete="off"></div>
+          <form class="toolbar mon-toolbar" role="search" aria-label="Filtrar bairros" novalidate>
+            <div class="field mon-busca"><label for="mon-busca">Buscar bairro pelo nome</label>
+              <div class="mon-input"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-search"/></svg><input type="search" id="mon-busca" placeholder="Ex.: Ibura" autocomplete="off"></div></div>
             <div class="field"><label for="mon-risco">Nível de risco</label>
               <select id="mon-risco"><option value="">Todos os níveis</option><option value="Alto">Risco alto</option><option value="Moderado">Risco moderado</option><option value="Baixo">Risco baixo</option></select></div>
             <div><button type="button" class="btn btn-secondary" id="mon-limpar">Limpar filtros</button></div>
@@ -334,32 +344,53 @@
         </section>
 
         <section class="view" id="view-alertas" data-view="alertas" hidden>
-          <div class="view-head">
-            <h2>Alertas personalizados</h2>
-            <p>Escolha um bairro para ver o alerta atual, o nível de risco e as orientações de prevenção.</p>
+          <div class="mon-hero">
+            <div class="view-head">
+              <p class="mon-eyebrow">Alertas</p>
+              <h2>Alertas personalizados</h2>
+              <p>Escolha um bairro para ver o alerta atual, o nível de risco e as orientações de prevenção.</p>
+            </div>
+            <ul class="mon-resumo" aria-label="Resumo dos alertas por nível">
+              <li class="alto"><span class="mon-num" id="alt-n-elevado">0</span><span>Risco elevado</span></li>
+              <li class="moderado"><span class="mon-num" id="alt-n-atencao">0</span><span>Atenção</span></li>
+              <li class="baixo"><span class="mon-num" id="alt-n-informativo">0</span><span>Informativo</span></li>
+            </ul>
           </div>
           <div class="notice" role="note"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-info"/></svg><p><strong>Alertas simulados.</strong> Eles aparecem apenas dentro desta aplicação. Nenhum SMS, WhatsApp, e-mail ou push é enviado.</p></div>
-          <div class="stack">
-            <div class="toolbar two">
-              <div class="field"><label for="alerta-bairro">Bairro</label><select id="alerta-bairro"></select></div>
-              <div><button type="button" class="btn btn-primary" id="alerta-simular"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-cloud-rain"/></svg> Simular atualização de chuva</button></div>
-              <div><button type="button" class="btn btn-secondary" id="alerta-ler"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-check"/></svg> Marcar todos como lidos</button></div>
-            </div>
-            <section id="alerta-atual" class="card" aria-live="polite"></section>
-            <div class="legend-inline" aria-label="Tipos de alerta">
-              <span class="badge badge-informativo">Informativo: risco baixo</span>
-              <span class="badge badge-atencao">Atenção: risco moderado</span>
-              <span class="badge badge-elevado">Risco elevado: risco alto</span>
-            </div>
-            <div class="two-col even">
-              <section class="card" aria-labelledby="t-hist">
-                <div class="card-head"><h3 id="t-hist">Histórico de alertas</h3></div>
+          <div class="stack alt-stack">
+            <section class="card alt-selecao" aria-labelledby="t-alt-bairro">
+              <div class="alt-selecao-head">
+                <div>
+                  <h3 id="t-alt-bairro">Alerta do seu bairro</h3>
+                  <p class="alt-sub">Escolha o bairro, veja o alerta atual e simule uma atualização de chuva.</p>
+                </div>
+                <div class="legend-inline" aria-label="Tipos de alerta">
+                  <span class="badge badge-informativo">Informativo: risco baixo</span>
+                  <span class="badge badge-atencao">Atenção: risco moderado</span>
+                  <span class="badge badge-elevado">Risco elevado: risco alto</span>
+                </div>
+              </div>
+              <div class="alt-controles">
+                <div class="field"><label for="alerta-bairro">Bairro</label><select id="alerta-bairro"></select></div>
+                <div><button type="button" class="btn btn-primary" id="alerta-simular"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-cloud-rain"/></svg> Simular atualização de chuva</button></div>
+              </div>
+              <div id="alerta-atual" class="alt-atual" aria-live="polite"></div>
+            </section>
+            <div class="two-col alt-colunas">
+              <section class="card alt-hist" aria-labelledby="t-hist">
+                <div class="alt-hist-head">
+                  <div>
+                    <h3 id="t-hist">Histórico de alertas</h3>
+                    <p class="alt-sub" id="alt-contagem" role="status" aria-live="polite"></p>
+                  </div>
+                  <button type="button" class="btn btn-secondary btn-sm" id="alerta-ler"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-check"/></svg> Marcar todos como lidos</button>
+                </div>
                 <ul class="list" id="alerta-historico"></ul>
                 <div class="empty" id="estado-vazio-alt" hidden><h3>Nenhum alerta no histórico</h3><p>Use "Simular atualização de chuva" para gerar um alerta de demonstração.</p></div>
               </section>
-              <section class="card" aria-labelledby="t-inscricao">
-                <div class="card-head"><h3 id="t-inscricao">Receba alertas do seu bairro</h3></div>
-                <p class="muted">Inscrição demonstrativa: fica apenas neste navegador e <strong>não envia alertas reais</strong>.</p>
+              <section class="card alt-form" aria-labelledby="t-inscricao">
+                <div class="alt-form-head"><span class="alt-ico" aria-hidden="true"><svg class="icon"><use href="#i-bell"/></svg></span><div><h3 id="t-inscricao">Receba alertas do seu bairro</h3><p class="alt-sub">Cadastro demonstrativo</p></div></div>
+                <p class="alt-aviso">Fica só neste navegador e <strong>não envia alertas reais</strong>.</p>
                 <form id="form-alerta" novalidate>
                   <div class="form-grid">
                     <div class="field full"><label for="nome">Nome completo</label><input type="text" id="nome" autocomplete="name" required aria-describedby="erro-nome" aria-invalid="false"><p class="erro-campo" id="erro-nome"></p></div>
@@ -448,18 +479,35 @@
     <button type="button" id="tab-menu" aria-label="Abrir menu completo"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-menu"/></svg><span>Menu</span></button>
   </nav>
 
-  <footer class="site-footer app-footer">
+  <footer class="site-footer">
     <div class="container">
-      <nav aria-label="Navegação do rodapé">
-        <ul class="footer-links footer-inline">
-          <li><a href="index.html">Início</a></li>
-          <li><a href="solucao.html">Solução</a></li>
-          <li><a href="impacto.html">Impacto e ODS</a></li>
-          <li><a href="equipe.html">Equipe</a></li>
-        </ul>
-      </nav>
+      <div class="footer-grid">
+        <div>
+          <h2>AlertaBairro</h2>
+          <p>Plataforma comunitária de monitoramento climático e comunicação preventiva. Projeto acadêmico
+            demonstrativo.</p>
+        </div>
+        <nav aria-label="Navegação do rodapé">
+          <h2>Navegação</h2>
+          <ul class="footer-links">
+            <li><a href="index.html">Início</a></li>
+            <li><a href="solucao.html">Solução</a></li>
+            <li><a href="impacto.html">Impacto e ODS</a></li>
+            <li><a href="equipe.html">Equipe</a></li>
+          </ul>
+        </nav>
+        <div>
+          <h2>Identificação</h2>
+          <ul class="footer-links">
+            <li>FIAP</li>
+            <li>Global Solution 2026/2</li>
+            <li>Tema: CitizenTech</li>
+          </ul>
+        </div>
+      </div>
       <div class="footer-note">
-        <p>FIAP, Global Solution 2026/2 (CitizenTech). Indicadores, locais cobertos e rotas são simulados e não substituem alertas oficiais da Defesa Civil, do Cemaden ou do INMET.</p>
+        <p>FIAP, Global Solution 2026/2 (CitizenTech). Indicadores, locais cobertos e rotas são simulados e não
+          substituem alertas oficiais da Defesa Civil, do Cemaden ou do INMET.</p>
       </div>
     </div>
   </footer>
