@@ -1,0 +1,136 @@
+/* ==========================================================================
+   AlertaBairro — ferramentas de acessibilidade
+   Tamanho do texto (data-fonte no <html>) e alto contraste (data-contraste).
+   Funciona nas quatro páginas, que usam folhas de estilo diferentes.
+   ========================================================================== */
+
+/* Barra de aviso com as ferramentas ------------------------------------- */
+.notice-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 4px 16px;
+}
+
+.acess-ferramentas {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.acess-botao {
+  min-height: 32px;
+  min-width: 36px;
+  padding: 2px 10px;
+  border: 1px solid #fff;
+  border-radius: 6px;
+  background: transparent;
+  color: #fff;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.acess-botao:hover:not(:disabled),
+.acess-botao[aria-pressed="true"] {
+  background: #fff;
+  color: #0a1f44;
+}
+
+.acess-botao:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.acess-botao:focus-visible {
+  outline: 3px solid #f59e0b;
+  outline-offset: 2px;
+}
+
+/* Tamanho do texto: todo o projeto usa rem ------------------------------- */
+html[data-fonte="1"] { font-size: 112.5%; }
+html[data-fonte="2"] { font-size: 125%; }
+html[data-fonte="3"] { font-size: 150%; }
+
+/* Alto contraste: fundo preto, texto branco, destaques em amarelo --------- */
+html[data-contraste="alto"] {
+  --bg: #000; --surface: #000; --sky: #000; --line: #fff; --ink: #fff; --muted: #fff;
+  --navy: #000; --navy-2: #000; --navy-3: #000;
+  --blue: #ffd400; --blue-dark: #ffe766;
+  --bg-dark: #000; --bg-light: #000;
+  --primary: #ffd400; --primary-hover: #ffe766;
+  --text-main: #fff; --text-muted: #fff; --border-color: #fff;
+}
+
+html[data-contraste="alto"] body,
+html[data-contraste="alto"] body *:not(svg):not(svg *):not(img):not([class*="map"]):not([class*="map"] *):not([class*="badge"]):not([class*="risco-"]):not(.acess-botao) {
+  background-color: #000 !important;
+  background-image: none !important;
+  color: #fff !important;
+  border-color: #fff !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+html[data-contraste="alto"] a,
+html[data-contraste="alto"] a * {
+  color: #ffd400 !important;
+  text-decoration: none !important;
+}
+
+html[data-contraste="alto"] .btn,
+html[data-contraste="alto"] .menu-cta,
+html[data-contraste="alto"] button:not(.acess-botao),
+html[data-contraste="alto"] input,
+html[data-contraste="alto"] select,
+html[data-contraste="alto"] textarea {
+  border: 2px solid #fff !important;
+}
+
+html[data-contraste="alto"] .btn-primary,
+html[data-contraste="alto"] .menu-cta,
+html[data-contraste="alto"] .btn-danger {
+  background-color: #ffd400 !important;
+  color: #000 !important;
+  text-decoration: none;
+}
+
+html[data-contraste="alto"] .acess-botao {
+  background: #000;
+  color: #fff;
+  border-color: #fff;
+}
+
+html[data-contraste="alto"] .acess-botao[aria-pressed="true"] {
+  background: #ffd400;
+  color: #000;
+  border-color: #ffd400;
+}
+
+html[data-contraste="alto"] :focus-visible {
+  outline: 4px solid #ffd400;
+  outline-offset: 3px;
+}
+
+/* Rótulos de risco mantêm texto legível sobre a cor de status */
+html[data-contraste="alto"] [class*="badge"] {
+  border: 2px solid #fff;
+  font-weight: 800;
+}
+
+html[data-contraste="alto"] .btn,
+html[data-contraste="alto"] .menu-cta {
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+html[data-contraste="alto"] .btn,
+html[data-contraste="alto"] .menu-cta,
+html[data-contraste="alto"] button:not(.acess-botao) {
+  border-width: 1px !important;
+  outline: 1px solid #fff;
+}

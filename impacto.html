@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,9 +9,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
-  <script src="js/main.js" defer></script>
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+  <link rel="stylesheet" href="css/index/style.css?v=4">
+  <link rel="stylesheet" href="css/paginas.css?v=4">
+  <link rel="stylesheet" href="css/acessibilidade.css?v=4">
+  <script src="js/main.js?v=4" defer></script>
+  <script src="js/acessibilidade.js?v=4" defer></script>
 </head>
+
 <body>
   <svg class="sprite" aria-hidden="true" focusable="false">
     <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></symbol>
@@ -32,14 +38,23 @@
     <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"/><path d="M9 12l2 2 4-4"/></symbol>
     <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
     <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></symbol>
+    <symbol id="i-building" viewBox="0 0 24 24"><path d="M4 21V5l8-2v18"/><path d="M12 9l8 2v10"/><path d="M8 8h1M8 12h1M8 16h1M16 14h1M16 18h1"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-8-4.6-8-10.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 8 2.5C20 15.4 12 20 12 20z"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3V4z"/><path d="M5 17a3 3 0 0 1 3-3h11"/></symbol>
   </svg>
+
   <a class="skip-link" href="#conteudo">Ir para o conteúdo principal</a>
+
+  <div class="notice-bar">Projeto acadêmico demonstrativo · Os dados exibidos são simulados</div>
+
   <header class="site-header">
     <div class="container header-inner">
       <a class="brand" href="index.html" aria-label="AlertaBairro, página inicial">
         <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-          <path d="M16 2C16 2 6 13.5 6 20a10 10 0 0 0 20 0C26 13.5 16 2 16 2Z" fill="#8dc3ea"/>
-          <path d="M11 20.5l3.5 3.5 7-7.5" fill="none" stroke="#0b2545" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M16 2C16 2 6 13.5 6 20a10 10 0 0 0 20 0C26 13.5 16 2 16 2Z" fill="#2563eb" />
+          <path d="M11 20.5l3.5 3.5 7-7.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
         <span>AlertaBairro</span>
       </a>
@@ -63,6 +78,7 @@
 
     <section class="page-hero" aria-labelledby="titulo-impacto">
       <div class="container">
+        <p class="hero-tagline">ODS 13 · ODS 11</p>
         <h1 id="titulo-impacto">Impacto social e ambiental</h1>
         <p class="lead">Como o AlertaBairro se conecta aos Objetivos de Desenvolvimento Sustentável da ONU.</p>
       </div>
@@ -70,74 +86,122 @@
 
     <section class="section" aria-labelledby="titulo-ods13">
       <div class="container">
-        <h2 id="titulo-ods13">ODS 13: Ação contra a Mudança Global do Clima</h2>
-        <p class="lead">O ODS 13 pede medidas urgentes para combater a mudança do clima e seus impactos.</p>
+        <div class="ods-banner blue">
+          <div class="ods-num" aria-hidden="true"><small>ODS</small><strong>13</strong></div>
+          <div class="ods-banner-text">
+            <h2 id="titulo-ods13">ODS 13: Ação contra a Mudança Global do Clima</h2>
+            <p>O ODS 13 pede medidas urgentes para combater a mudança do clima e seus impactos.</p>
+          </div>
+        </div>
         <div class="grid grid-2">
-          <article class="card"><h3>Adaptação climática</h3><p>Comunidades precisam se adaptar a chuvas intensas, que tendem a ser mais frequentes e severas em um clima em mudança.</p></article>
-          <article class="card"><h3>Prevenção de desastres</h3><p>Saber o que fazer antes da chuva reduz perdas e protege vidas.</p></article>
-          <article class="card"><h3>Acesso à informação</h3><p>O painel traduz indicadores em níveis de risco e orientações fáceis de entender.</p></article>
-          <article class="card"><h3>Conscientização comunitária</h3><p>Informação compartilhada ajuda vizinhos e lideranças a se organizarem.</p></article>
+          <article class="info-card">
+            <div class="icon-box"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-cloud-rain"/></svg></div>
+            <h3>Adaptação climática</h3>
+            <p>Comunidades precisam se adaptar a chuvas intensas, que tendem a ser mais frequentes e severas em um clima em mudança.</p>
+          </article>
+          <article class="info-card">
+            <div class="icon-box"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-shield"/></svg></div>
+            <h3>Prevenção de desastres</h3>
+            <p>Saber o que fazer antes da chuva reduz perdas e protege vidas.</p>
+          </article>
+          <article class="info-card">
+            <div class="icon-box"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-info"/></svg></div>
+            <h3>Acesso à informação</h3>
+            <p>O painel traduz indicadores em níveis de risco e orientações fáceis de entender.</p>
+          </article>
+          <article class="info-card">
+            <div class="icon-box"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-users"/></svg></div>
+            <h3>Conscientização comunitária</h3>
+            <p>Informação compartilhada ajuda vizinhos e lideranças a se organizarem.</p>
+          </article>
         </div>
       </div>
     </section>
 
-    <section class="section section-alt" aria-labelledby="titulo-ods11">
+    <section class="section" aria-labelledby="titulo-ods11">
       <div class="container">
-        <h2 id="titulo-ods11">ODS 11: Cidades e Comunidades Sustentáveis</h2>
-        <p class="lead">O ODS 11 busca cidades inclusivas, seguras, resilientes e sustentáveis. O AlertaBairro complementa o ODS 13 no nível local.</p>
+        <div class="ods-banner dark">
+          <div class="ods-num" aria-hidden="true"><small>ODS</small><strong>11</strong></div>
+          <div class="ods-banner-text">
+            <h2 id="titulo-ods11">ODS 11: Cidades e Comunidades Sustentáveis</h2>
+            <p>O ODS 11 busca cidades inclusivas, seguras, resilientes e sustentáveis. O AlertaBairro complementa o ODS 13 no nível local.</p>
+          </div>
+        </div>
         <div class="grid grid-2">
-          <article class="card"><h3>Resiliência urbana</h3><p>Bairros mais bem informados respondem melhor a eventos extremos.</p></article>
-          <article class="card"><h3>Comunidades mais seguras</h3><p>Orientações preventivas ajudam famílias a se preparar.</p></article>
-          <article class="card"><h3>Redução da vulnerabilidade</h3><p>O foco em áreas vulneráveis busca diminuir desigualdades diante dos riscos climáticos.</p></article>
-          <article class="card"><h3>Planejamento urbano sustentável</h3><p>Dados organizados por bairro podem apoiar discussões sobre prevenção e ocupação do território.</p></article>
+          <article class="info-card">
+            <div class="icon-box"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-building"/></svg></div>
+            <h3>Resiliência urbana</h3>
+            <p>Bairros mais bem informados respondem melhor a eventos extremos.</p>
+          </article>
+          <article class="info-card">
+            <div class="icon-box"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-heart"/></svg></div>
+            <h3>Comunidades mais seguras</h3>
+            <p>Orientações preventivas ajudam famílias a se preparar.</p>
+          </article>
+          <article class="info-card">
+            <div class="icon-box"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-target"/></svg></div>
+            <h3>Redução da vulnerabilidade</h3>
+            <p>O foco em áreas vulneráveis busca diminuir desigualdades diante dos riscos climáticos.</p>
+          </article>
+          <article class="info-card">
+            <div class="icon-box"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-map"/></svg></div>
+            <h3>Planejamento urbano sustentável</h3>
+            <p>Dados organizados por bairro podem apoiar discussões sobre prevenção e ocupação do território.</p>
+          </article>
         </div>
       </div>
     </section>
 
     <section class="section" aria-labelledby="titulo-esperado">
-      <div class="container">
-        <h2 id="titulo-esperado">Impacto esperado</h2>
-        <p class="lead">Os itens abaixo são impactos potenciais. Eles ainda não foram medidos nem são resultados alcançados.</p>
-        <ul>
-          <li>Maior acesso à informação preventiva.</li>
-          <li>Mais consciência sobre os riscos de cada bairro.</li>
-          <li>Incentivo à preparação comunitária.</li>
-          <li>Apoio à tomada de decisões preventivas.</li>
-          <li>Fortalecimento da comunicação local.</li>
+      <div class="container expected-grid">
+        <div>
+          <h2 class="section-title" id="titulo-esperado">Impacto esperado</h2>
+          <p class="section-sub">Os itens listados são impactos potenciais. Eles ainda não foram medidos nem são resultados
+            alcançados.</p>
+        </div>
+        <ul class="check-list">
+            <li><span class="tick"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-check"/></svg></span>Maior acesso à informação preventiva.</li>
+            <li><span class="tick"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-check"/></svg></span>Mais consciência sobre os riscos de cada bairro.</li>
+            <li><span class="tick"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-check"/></svg></span>Incentivo à preparação comunitária.</li>
+            <li><span class="tick"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-check"/></svg></span>Apoio à tomada de decisões preventivas.</li>
+            <li><span class="tick"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-check"/></svg></span>Fortalecimento da comunicação local.</li>
         </ul>
       </div>
     </section>
 
-    <section class="section section-alt" aria-labelledby="titulo-indicadores">
+    <section class="section" aria-labelledby="titulo-indicadores">
       <div class="container">
-        <h2 id="titulo-indicadores">Indicadores de impacto</h2>
-        <p class="lead">Metas e estimativas acadêmicas, definidas pela equipe para orientar o projeto. Não representam resultados reais.</p>
+        <div class="section-head">
+          <h2 class="section-title" id="titulo-indicadores">Indicadores de impacto</h2>
+          <p class="section-sub">Metas e estimativas acadêmicas, definidas pela equipe para orientar o projeto. Não
+            representam resultados reais.</p>
+        </div>
         <div class="grid grid-3">
-          <article class="card impact-card">
+          <article class="info-card impact-card">
             <p class="valor" id="meta-bairros">12</p>
             <h3>Bairros monitorados</h3>
             <p>Quantidade de bairros demonstrativos na base de dados atual.</p>
             <span class="tag">Dado demonstrativo</span>
           </article>
-          <article class="card impact-card">
-            <p class="valor">[A definir]</p>
-            <h3>Pessoas potencialmente beneficiadas</h3>
-            <p>Estimativa a ser definida pela equipe com base na população dos bairros escolhidos.</p>
-            <span class="tag">Meta acadêmica</span>
+          <article class="info-card impact-card">
+            <p class="valor">8,2 milhões</p>
+            <h3>Pessoas em áreas de risco no Brasil</h3>
+            <p>Público potencial da solução: moradores de áreas de risco de deslizamentos, inundações e enxurradas nos municípios monitorados pelo Cemaden (IBGE e Cemaden, 2018).</p>
+            <span class="tag">Dado real</span>
           </article>
-          <article class="card impact-card">
+          <article class="info-card impact-card">
             <p class="valor" id="meta-inscricoes">0</p>
             <h3>Inscrições demonstrativas</h3>
             <p>Cadastros de teste feitos neste navegador no formulário da página Solução.</p>
             <span class="tag">Dado demonstrativo</span>
           </article>
-          <article class="card impact-card">
+          <article class="info-card impact-card">
             <p class="valor">12</p>
             <h3>Orientações preventivas disponíveis</h3>
             <p>Uma orientação por bairro na versão atual do painel.</p>
             <span class="tag">Dado demonstrativo</span>
           </article>
-          <article class="card impact-card">
+          <article class="info-card impact-card">
             <p class="valor" id="meta-ocorrencias">0</p>
             <h3>Relatos comunitários de teste</h3>
             <p>Relatos registrados neste navegador no painel, sempre não verificados.</p>
@@ -149,16 +213,31 @@
 
     <section class="section" aria-labelledby="titulo-referencias">
       <div class="container">
-        <h2 id="titulo-referencias">Referências</h2>
+        <div class="section-head">
+          <h2 class="section-title" id="titulo-referencias">Referências</h2>
+        </div>
         <ul class="ref-list">
-          <li><a href="https://brasil.un.org/pt-br/sdgs/13" target="_blank" rel="noopener noreferrer">ONU Brasil: ODS 13, Ação contra a Mudança Global do Clima</a></li>
-          <li><a href="https://brasil.un.org/pt-br/sdgs/11" target="_blank" rel="noopener noreferrer">ONU Brasil: ODS 11, Cidades e Comunidades Sustentáveis</a></li>
-          <li><a href="https://www.gov.br/cemaden" target="_blank" rel="noopener noreferrer">Cemaden: Centro Nacional de Monitoramento e Alertas de Desastres Naturais</a></li>
-          <li><a href="https://www.gov.br/mdr/pt-br/assuntos/protecao-e-defesa-civil" target="_blank" rel="noopener noreferrer">Defesa Civil Nacional (Ministério da Integração e do Desenvolvimento Regional)</a></li>
-          <li><a href="https://portal.inmet.gov.br" target="_blank" rel="noopener noreferrer">INMET: Instituto Nacional de Meteorologia</a></li>
-          <li><a href="https://www.ibge.gov.br/apps/populacaoareasderisco/" target="_blank" rel="noopener noreferrer">IBGE e Cemaden: População em Áreas de Risco no Brasil (2018)</a></li>
+          <li><a href="https://brasil.un.org/pt-br/sdgs/13" target="_blank" rel="noopener noreferrer"><span>ONU Brasil: ODS 13, Ação contra a Mudança Global do Clima</span><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-arrow"/></svg></a></li>
+          <li><a href="https://brasil.un.org/pt-br/sdgs/11" target="_blank" rel="noopener noreferrer"><span>ONU Brasil: ODS 11, Cidades e Comunidades Sustentáveis</span><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-arrow"/></svg></a></li>
+          <li><a href="https://www.gov.br/cemaden" target="_blank" rel="noopener noreferrer"><span>Cemaden: Centro Nacional de Monitoramento e Alertas de Desastres Naturais</span><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-arrow"/></svg></a></li>
+          <li><a href="https://www.gov.br/mdr/pt-br/assuntos/protecao-e-defesa-civil" target="_blank" rel="noopener noreferrer"><span>Defesa Civil Nacional (Ministério da Integração e do Desenvolvimento Regional)</span><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-arrow"/></svg></a></li>
+          <li><a href="https://portal.inmet.gov.br" target="_blank" rel="noopener noreferrer"><span>INMET: Instituto Nacional de Meteorologia</span><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-arrow"/></svg></a></li>
+          <li><a href="https://www.ibge.gov.br/apps/populacaoareasderisco/" target="_blank" rel="noopener noreferrer"><span>IBGE e Cemaden: População em Áreas de Risco no Brasil (2018)</span><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-arrow"/></svg></a></li>
         </ul>
-        <p>Todos os links abrem em nova aba.</p>
+        <p class="note-muted">Todos os links abrem em nova aba.</p>
+      </div>
+    </section>
+
+    <section class="section cta-section">
+      <div class="container">
+        <div class="cta-banner">
+          <div class="cta-content">
+            <h2>Conheça o risco do seu bairro</h2>
+            <p>Explore os dados demonstrativos e teste o cadastro de alertas na plataforma.</p>
+            <a class="btn btn-light" href="solucao.html">Abrir monitoramento</a>
+          </div>
+          <div class="cta-graphic"></div>
+        </div>
       </div>
     </section>
   </main>
@@ -168,7 +247,8 @@
       <div class="footer-grid">
         <div>
           <h2>AlertaBairro</h2>
-          <p>Plataforma comunitária de monitoramento climático e comunicação preventiva. Projeto acadêmico demonstrativo.</p>
+          <p>Plataforma comunitária de monitoramento climático e comunicação preventiva. Projeto acadêmico
+            demonstrativo.</p>
         </div>
         <nav aria-label="Navegação do rodapé">
           <h2>Navegação</h2>
@@ -180,14 +260,20 @@
           </ul>
         </nav>
         <div>
-          <h2>Identificação acadêmica</h2>
-          <p>FIAP<br>Global Solution 2026/2<br>Tema: CitizenTech</p>
+          <h2>Identificação</h2>
+          <ul class="footer-links">
+            <li>FIAP</li>
+            <li>Global Solution 2026/2</li>
+            <li>Tema: CitizenTech</li>
+          </ul>
         </div>
       </div>
       <div class="footer-note">
-        <p>Os indicadores climáticos exibidos são simulados para fins acadêmicos e não substituem alertas oficiais da Defesa Civil, do Cemaden ou do INMET.</p>
+        <p>Os indicadores climáticos exibidos são simulados para fins acadêmicos e não substituem alertas oficiais da
+          Defesa Civil, do Cemaden ou do INMET.</p>
       </div>
     </div>
   </footer>
 </body>
+
 </html>
