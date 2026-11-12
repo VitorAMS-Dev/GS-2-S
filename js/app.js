@@ -54,7 +54,9 @@
   const state = {
     view: "onde-estou",
     local: null, // { lat, lng, origem: gps | bairro | mapa, precisao, bairroId, quando }: onde o usuário está
-    fuga: { destino: "" }, // chave do destino escolhido ("bairro-7", "coberto-3"); vazio = o recomendado
+    fuga: { destino: "", perfil: "padrao" }, // perfil: padrao | reduzida (mobilidade reduzida)
+    sim: { fator: 100, confirmado: {} }, // simulador de chuva: % do cenário base e último nível já avisado por bairro
+ // chave do destino escolhido ("bairro-7", "coberto-3"); vazio = o recomendado
     cidade: "",
     bairros: BAIRROS.map((b) => Object.assign({}, b)),
     ocorrencias: [],
@@ -211,6 +213,11 @@
       state.config = { nome: String(cfg.nome || ""), cidade: String(cfg.cidade || ""), acompanhados: Array.isArray(cfg.acompanhados) ? cfg.acompanhados.map(Number) : [] };
     }
     state.cidade = state.config.cidade;
+    const perfil = lerJSON(STORAGE.perfil, null);
+    if (perfil === "padrao" || perfil === "reduzida") state.fuga.perfil = perfil;
+    const sim = lerJSON(STORAGE.simulacao, null);
+    if (sim && Number.isFinite(sim.fator) && sim.fator >= 0 && sim.fator <= 200) state.sim.fator = sim.fator;
+    state.bairros.forEach((b) => { state.sim.confirmado[b.id] = b.risco; });
     const loc = lerJSON(STORAGE.local, null);
     if (loc && Number.isFinite(loc.lat) && Number.isFinite(loc.lng) && Math.abs(loc.lat) <= 90 && Math.abs(loc.lng) <= 180) {
       state.local = { lat: loc.lat, lng: loc.lng, origem: LOCAL_ORIGEM[loc.origem] ? loc.origem : "mapa", precisao: Number(loc.precisao) || null, bairroId: Number(loc.bairroId) || null, quando: String(loc.quando || "") };
@@ -794,19 +801,49 @@
     return { bairro: melhor.bairro, km: melhor.km, dentro: melhor.km <= DISTANCIA_MAX_KM };
   }
 
-  // Destinos seguros: primeiro bairros sem risco (nível baixo), depois locais cobertos. Cada lista ordenada pela distância.
+  // Velocidade a pé estimada e peso do trajeto: o piso em ladeira "custa" mais para quem tem mobilidade reduzida.
+  const VELOCIDADE_KMH = { padrao: 4.5, reduzida: 2.5 };
+  const PESO_PISO = { plano: 1, suave: 1.3, ladeira: 2 };
+  const PISO_ROTULO = { plano: "piso plano", suave: "leve inclinação", ladeira: "ladeira" };
+  const REDUZIDA_MAX_KM = 5; // para mobilidade reduzida só se sugerem locais até esta distância
+
+  function tempoAPe(km, perfil, piso) {
+    const peso = perfil === "reduzida" ? (PESO_PISO[piso] || 1) : 1;
+    return Math.max(1, Math.round(((km * peso) / VELOCIDADE_KMH[perfil]) * 60));
+  }
+
+  function formatarTempo(min) {
+    if (min < 60) return `${min} min`;
+    const h = Math.floor(min / 60), m = min % 60;
+    return m ? `${h} h ${String(m).padStart(2, "0")} min` : `${h} h`;
+  }
+
+  // Destinos seguros. Perfil padrão: bairros sem risco e depois locais cobertos, por distância.
+  // Mobilidade reduzida: só locais cobertos com rampa até 5 km, ordenados pelo esforço (distância x tipo de piso).
   function calcularDestinos() {
     const sit = situacaoAtual();
     if (!sit) return null;
     const origem = state.local;
-    const bairros = state.bairros
+    const perfil = state.fuga.perfil;
+    const reduzida = perfil === "reduzida";
+    const bairros = reduzida ? [] : state.bairros
       .filter((b) => b.risco === "Baixo" && !(sit.dentro && b.id === sit.bairro.id))
-      .map((b) => ({ chave: `bairro-${b.id}`, tipo: "bairro", nome: b.nome, cidade: b.cidade, lat: b.lat, lng: b.lng, km: distanciaKm(origem, b) }))
+      .map((b) => { const km = distanciaKm(origem, b); return { chave: `bairro-${b.id}`, tipo: "bairro", nome: b.nome, cidade: b.cidade, lat: b.lat, lng: b.lng, km, min: tempoAPe(km, "padrao") }; })
       .filter((d) => d.km <= DESTINO_MAX_KM).sort((x, y) => x.km - y.km).slice(0, 3);
-    const cobertos = LOCAIS_COBERTOS
-      .map((c) => ({ chave: `coberto-${c.id}`, tipo: "coberto", nome: c.nome, cidade: c.cidade, lat: c.lat, lng: c.lng, km: distanciaKm(origem, c), dado: c }))
-      .filter((d) => d.km <= DESTINO_MAX_KM).sort((x, y) => x.km - y.km).slice(0, 3);
-    return { sit, bairros, cobertos, lista: bairros.concat(cobertos) };
+    let cobertos = LOCAIS_COBERTOS
+      .map((c) => { const km = distanciaKm(origem, c); return { chave: `coberto-${c.id}`, tipo: "coberto", nome: c.nome, cidade: c.cidade, lat: c.lat, lng: c.lng, km, dado: c, rampa: c.acesso.rampa, piso: c.acesso.piso, min: tempoAPe(km, perfil, c.acesso.piso) }; })
+      .filter((d) => d.km <= DESTINO_MAX_KM);
+    let ignorados = 0;
+    if (reduzida) {
+      const antes = cobertos.length;
+      cobertos = cobertos.filter((d) => d.rampa && d.km <= REDUZIDA_MAX_KM)
+        .sort((x, y) => x.km * PESO_PISO[x.piso] - y.km * PESO_PISO[y.piso]);
+      ignorados = antes - cobertos.length;
+    } else {
+      cobertos.sort((x, y) => x.km - y.km);
+    }
+    cobertos = cobertos.slice(0, 3);
+    return { sit, bairros, cobertos, reduzida, ignorados, lista: bairros.concat(cobertos) };
   }
 
   /* ---- 10.2 Definir a posição do usuário ---- */
@@ -959,6 +996,7 @@
 
   /* ---- 10.4 Tela de fuga ---- */
   function renderFuga(mover) {
+    $$('input[name="fuga-perfil"]').forEach((r) => { r.checked = r.value === state.fuga.perfil; });
     const semLocal = !state.local;
     ["#fuga-destino", "#fuga-mapa-card", "#fuga-alternativas-card"].forEach((id) => { $(id).hidden = semLocal; });
     $("#fuga-sem-local").hidden = !semLocal;
@@ -977,10 +1015,12 @@
 
     if (!escolhido) {
       resumo.textContent = quem;
-      const semDestino = el("h3", "", "Nenhum destino a menos de 40 km");
+      const semDestino = el("h3", "", dados.reduzida ? `Nenhum local acessível a menos de ${REDUZIDA_MAX_KM} km` : "Nenhum destino a menos de 40 km");
       semDestino.id = "t-fuga-destino";
       card.append(el("p", "eyebrow", "Sem destino cadastrado"), semDestino,
-        el("p", "", "A demonstração não tem bairro sem risco nem local coberto perto de você. Ligue para a Defesa Civil (199) e siga as orientações."));
+        el("p", "", dados.reduzida
+          ? "A demonstração não tem local com rampa perto de você. Ligue para a Defesa Civil (199) ou o SAMU (192), diga que precisa de apoio para sair e peça ajuda a um vizinho."
+          : "A demonstração não tem bairro sem risco nem local coberto perto de você. Ligue para a Defesa Civil (199) e siga as orientações."));
       $("#fuga-alternativas-card").hidden = true;
       renderMapaFuga(null, [], mover);
       return;
@@ -988,16 +1028,19 @@
 
     const recomendado = escolhido === lista[0];
     const direcao = rumo(state.local, escolhido);
-    resumo.textContent = `${quem} Destino ${recomendado ? "recomendado" : "escolhido"}: ${escolhido.nome}, a ${formatarDist(escolhido.km)} em direção ao ${direcao}.`;
+    resumo.textContent = `${quem}${dados.reduzida ? " Perfil: mobilidade reduzida." : ""} Destino ${recomendado ? "recomendado" : "escolhido"}: ${escolhido.nome}, a ${formatarDist(escolhido.km)} em direção ao ${direcao}.`;
 
     const selos = el("div", "occ-meta");
     if (escolhido.tipo === "bairro") selos.append(el("span", "badge badge-baixo", "Bairro sem risco"));
     else selos.append(el("span", "badge badge-neutro", `Local coberto: ${escolhido.dado.tipo}`), el("span", "tag", "Sugestão fictícia"));
+    if (dados.reduzida) selos.append(el("span", "badge badge-baixo", "Acessível: rampa"));
     const titulo = el("h3", "", escolhido.nome);
     titulo.id = "t-fuga-destino";
     titulo.tabIndex = -1;
     const medidas = el("dl", "medidas");
-    [["Distância em linha reta", formatarDist(escolhido.km)], ["Direção", direcao.charAt(0).toUpperCase() + direcao.slice(1)]].forEach(([t, v]) => {
+    const itensMedida = [["Distância em linha reta", formatarDist(escolhido.km)], ["Tempo a pé (estimado)", `cerca de ${formatarTempo(escolhido.min)}`], ["Direção", direcao.charAt(0).toUpperCase() + direcao.slice(1)]];
+    if (escolhido.tipo === "coberto") itensMedida.push(["Acesso", `${escolhido.rampa ? "Com rampa" : "Sem rampa"}, ${PISO_ROTULO[escolhido.piso]}`]);
+    itensMedida.forEach(([t, v]) => {
       const d = el("div"); d.append(el("dt", "", t), el("dd", "", v)); medidas.append(d);
     });
     card.append(el("p", "eyebrow", recomendado ? "Destino recomendado" : "Destino escolhido"), titulo, selos,
@@ -1007,7 +1050,10 @@
     } else {
       card.append(el("p", "muted", `${escolhido.cidade}. Risco atual simulado: baixo.`));
     }
-    if (dados.bairros.length === 0) {
+    if (dados.reduzida) {
+      card.append(el("p", "destino-aviso", "Peça ajuda a um vizinho ou familiar para o trajeto. Se não conseguir sair, vá para o ponto mais alto da casa e ligue 199 (Defesa Civil) ou 192 (SAMU)."));
+      if (dados.ignorados > 0) card.append(el("p", "muted", `Foram deixados de fora ${dados.ignorados} local(is) sem rampa ou a mais de ${REDUZIDA_MAX_KM} km.`));
+    } else if (dados.bairros.length === 0) {
       card.append(el("p", "destino-aviso", "Não há bairro sem risco por perto. O destino principal é o local coberto mais próximo."));
     }
 
@@ -1020,7 +1066,7 @@
       const principal = el("div", "row-main");
       const t = el("div", "row-title"); t.append(el("span", "", d.nome), d.tipo === "bairro" ? el("span", "badge badge-baixo", "Bairro sem risco") : el("span", "badge badge-neutro", "Local coberto"));
       if (d === lista[0]) t.append(el("span", "tag", "Recomendado"));
-      principal.append(t, el("p", "row-sub", `${formatarDist(d.km)} em direção ao ${rumo(state.local, d)}${d.tipo === "coberto" ? ", sugestão fictícia" : ""}`));
+      principal.append(t, el("p", "row-sub", `${formatarDist(d.km)}, cerca de ${formatarTempo(d.min)} a pé, em direção ao ${rumo(state.local, d)}${d.tipo === "coberto" ? (d.rampa ? ", com rampa" : ", sem rampa") + ", sugestão fictícia" : ""}`));
       b.append(principal);
       b.setAttribute("aria-label", `Ir para ${d.nome}, ${d.tipo === "bairro" ? "bairro sem risco" : "local coberto fictício"}, a ${formatarDist(d.km)} em direção ao ${rumo(state.local, d)}`);
       b.addEventListener("click", () => selecionarDestino(d.chave));
@@ -1119,6 +1165,77 @@
       $("#mon-busca").value = ""; $("#mon-risco").value = "";
       renderMonitoramento(); $("#mon-busca").focus();
     });
+  }
+
+  /* ---- 10.6 Simulador de chuva e perfil de deslocamento ---- */
+  function chuvaPorFator(base, fator) { return Math.max(0, Math.min(140, Math.round((base * fator) / 10) / 10)); }
+
+  function sincronizarSimulador() {
+    const campo = $("#sim-fator");
+    if (!campo) return;
+    campo.value = String(state.sim.fator);
+    $("#sim-fator-valor").textContent = `${state.sim.fator}%`;
+    campo.setAttribute("aria-valuetext", `${state.sim.fator}% do cenário base`);
+  }
+
+  function resumoSimulacao(mudancas) {
+    const cont = { Alto: 0, Moderado: 0, Baixo: 0 };
+    state.bairros.forEach((b) => { cont[b.risco] += 1; });
+    const maior = state.bairros.reduce((m, b) => (b.chuva > m.chuva ? b : m), state.bairros[0]);
+    let texto = `Com ${state.sim.fator}% da chuva base: ${cont.Alto} bairro(s) em risco alto, ${cont.Moderado} moderado e ${cont.Baixo} baixo. Maior chuva: ${fmt(maior.chuva)} mm em ${maior.nome}.`;
+    if (mudancas.length) {
+      const lista = mudancas.slice(0, 4).map((m) => `${m.nome} (${m.de.toLowerCase()} para ${m.para.toLowerCase()})`).join(", ");
+      texto += ` Mudaram de nível: ${lista}${mudancas.length > 4 ? ` e mais ${mudancas.length - 4}` : ""}.`;
+    }
+    if (state.local) texto += " A sua rota de fuga foi recalculada.";
+    return texto;
+  }
+
+  // confirmar = false enquanto o controle é arrastado (só atualiza a tela); true ao soltar (gera os alertas).
+  function aplicarFator(fator, confirmar) {
+    state.sim.fator = fator;
+    state.bairros.forEach((b) => { b.chuva = chuvaPorFator(b.chuvaBase, fator); atualizarRisco(b); });
+    const mudancas = state.bairros.filter((b) => b.risco !== state.sim.confirmado[b.id])
+      .map((b) => ({ nome: b.nome, de: state.sim.confirmado[b.id], para: b.risco }));
+    if (confirmar) {
+      state.bairros.filter((b) => b.risco !== state.sim.confirmado[b.id])
+        .forEach((b) => state.alertas.push(criarAlerta(b, state.sim.confirmado[b.id], false)));
+      state.bairros.forEach((b) => { state.sim.confirmado[b.id] = b.risco; });
+      salvarAlertas();
+      if (mudancas.length) toast(`${mudancas.length} alerta(s) novo(s) gerado(s) pela simulação.`, "sucesso");
+    }
+    salvarChuva();
+    salvarJSON(STORAGE.simulacao, { fator });
+    renderTudo();
+    $("#sim-resumo").textContent = resumoSimulacao(mudancas);
+  }
+
+  function iniciarSimulador() {
+    const campo = $("#sim-fator");
+    let quadro = null;
+    campo.addEventListener("input", () => {
+      const fator = Number(campo.value);
+      $("#sim-fator-valor").textContent = `${fator}%`;
+      if (quadro) cancelAnimationFrame(quadro);
+      quadro = requestAnimationFrame(() => { quadro = null; aplicarFator(fator, false); });
+    });
+    campo.addEventListener("change", () => {
+      if (quadro) { cancelAnimationFrame(quadro); quadro = null; }
+      aplicarFator(Number(campo.value), true);
+    });
+    $$(".sim-cenarios [data-fator]").forEach((b) => b.addEventListener("click", () => {
+      aplicarFator(Number(b.dataset.fator), true);
+    }));
+    sincronizarSimulador();
+  }
+
+  function iniciarPerfilFuga() {
+    $$('input[name="fuga-perfil"]').forEach((r) => r.addEventListener("change", () => {
+      state.fuga.perfil = r.value;
+      state.fuga.destino = "";
+      salvarJSON(STORAGE.perfil, r.value);
+      renderFuga(true);
+    }));
   }
 
   /* ---------- 11. Ocorrências -------------------------------------------- */
@@ -1362,6 +1479,7 @@
     alvo.chuva = Math.max(0, Math.min(140, Math.round((alvo.chuva + variacao) * 10) / 10));
     atualizarRisco(alvo);
     state.alertas.push(criarAlerta(alvo, anterior, false));
+    state.sim.confirmado[alvo.id] = alvo.risco;
     salvarChuva(); salvarAlertas();
     renderTudo();
     toast(`Atualização simulada em ${alvo.nome}: ${fmt(alvo.chuva)} mm (risco ${alvo.risco}).`, "sucesso");
@@ -1471,7 +1589,8 @@
       state.bairros = BAIRROS.map((b) => Object.assign({}, b));
       state.config = { nome: "", cidade: "", acompanhados: [] }; state.cidade = ""; $("#sel-cidade").value = "";
       state.ocorrencias = []; state.alertas = [];
-      state.local = null; state.fuga.destino = "";
+      state.local = null; state.fuga.destino = ""; state.fuga.perfil = "padrao"; state.sim = { fator: 100, confirmado: {} };
+      state.bairros.forEach((b) => { state.sim.confirmado[b.id] = b.risco; });
       confirmar.hidden = true;
       renderTudo(); ajustarMapa();
       toast("Dados locais apagados.", "sucesso");
@@ -1482,6 +1601,9 @@
     state.bairros = BAIRROS.map((b) => Object.assign({}, b));
     state.ocorrencias = criarOcorrenciasDemo();
     state.alertas = criarAlertasIniciais();
+    state.sim = { fator: 100, confirmado: {} };
+    state.bairros.forEach((b) => { state.sim.confirmado[b.id] = b.risco; });
+    salvarJSON(STORAGE.simulacao, { fator: 100 });
     salvarChuva(); salvarOcorrencias(); salvarAlertas();
     renderTudo();
     toast("Dados de demonstração restaurados.", "sucesso");
@@ -1496,6 +1618,7 @@
     renderMonitoramento(); renderOcorrencias(); renderComunidade();
     renderPainelNotificacoes(); renderAlertasView(); atualizarContadores();
     renderMapa(); renderPainelBairro(); renderConfig(); renderLocais(false);
+    sincronizarSimulador();
     const nome = state.config.nome;
     $("#perfil-nome").textContent = nome || "Visitante";
     $("#perfil-avatar").textContent = iniciais(nome || "Visitante");
@@ -1508,6 +1631,8 @@
     iniciarMapa();
     iniciarControlesMapa();
     iniciarMonitoramento();
+    iniciarSimulador();
+    iniciarPerfilFuga();
     iniciarOcorrencias();
     iniciarAlertas();
     iniciarConfig();

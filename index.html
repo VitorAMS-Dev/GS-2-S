@@ -11,13 +11,19 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
-  <link rel="stylesheet" href="./css/index/style.css">
+  <link rel="stylesheet" href="css/index/style.css">
+  <link rel="stylesheet" href="css/paginas.css">
+  <link rel="stylesheet" href="css/acessibilidade.css">
+  <script src="js/main.js" defer></script>
+  <script src="js/acessibilidade.js" defer></script>
 </head>
 
 <body>
 
+  <a class="skip-link" href="#conteudo">Ir para o conteúdo principal</a>
+
   <!-- ICONS SPRITE (mantido o seu original) -->
-  <svg class="sprite" style="display: none;" aria-hidden="true" focusable="false">
+  <svg class="sprite" aria-hidden="true" focusable="false">
     <symbol id="i-map" viewBox="0 0 24 24">
       <path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2z" />
       <path d="M9 4v14" />
@@ -38,17 +44,21 @@
 
   <header class="site-header">
     <div class="container header-inner">
-      <a class="brand" href="index.html">
-        <svg viewBox="0 0 32 32" aria-hidden="true">
+      <a class="brand" href="index.html" aria-label="AlertaBairro, página inicial">
+        <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
           <path d="M16 2C16 2 6 13.5 6 20a10 10 0 0 0 20 0C26 13.5 16 2 16 2Z" fill="#2563eb" />
           <path d="M11 20.5l3.5 3.5 7-7.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"
             stroke-linejoin="round" />
         </svg>
         <span>AlertaBairro</span>
       </a>
+      <button class="menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="menu-principal">
+        <span class="sr-only">Abrir menu</span>
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
       <nav aria-label="Navegação principal">
-        <ul class="menu">
-          <li><a href="index.html">Início</a></li>
+        <ul class="menu" id="menu-principal">
+          <li><a href="index.html" aria-current="page">Início</a></li>
           <li><a href="solucao.html">Solução</a></li>
           <li><a href="impacto.html">Impacto e ODS</a></li>
           <li><a href="equipe.html">Equipe</a></li>
@@ -212,8 +222,8 @@
             <text x="152" y="1296" font-size="13" fill="#4A5B7A" font-family="sans-serif">Fonte: IBGE e Cemaden,
               População em Áreas de Risco</text>
             <text x="152" y="1316" font-size="13" fill="#4A5B7A" font-family="sans-serif">no Brasil, 2018.
-              <a href="https://www.ibge.gov.br/apps/populacaoareasderisco/" target="_blank">
-                <tspan fill="#1457D9" text-decoration="underline" font-weight="600" style="cursor: pointer;">Acessar a
+              <a href="https://www.ibge.gov.br/apps/populacaoareasderisco/" target="_blank" rel="noopener noreferrer">
+                <tspan fill="#1457D9" text-decoration="underline" font-weight="600">Acessar a
                   fonte original (abre em nova aba)</tspan>
               </a>
             </text>
@@ -241,7 +251,7 @@
     <!-- O QUE VOCÊ ENCONTRA -->
     <section class="section">
       <div class="container">
-        <h2 class="section-title text-center" style="margin-bottom: 60px;">O que você encontra no painel</h2>
+        <h2 class="section-title text-center mb-60">O que você encontra no painel</h2>
         <div class="features-grid">
           <div>
             <div class="feature-item">
@@ -404,7 +414,7 @@
     <section class="section steps-section">
       <div class="container">
         <h2 class="section-title">Como o AlertaBairro funciona</h2>
-        <p style="color: var(--text-muted); margin-bottom: 40px;">Cinco passos para transformar informação em prevenção.
+        <p class="texto-apoio">Cinco passos para transformar informação em prevenção.
         </p>
 
         <div class="timeline">
@@ -441,7 +451,7 @@
     <section class="section">
       <div class="container bene-grid">
         <svg viewBox="120 2700 400 480" width="100%" height="100%" preserveAspectRatio="xMidYMid slice"
-          xmlns="http://www.w3.org/2000/svg" style="border-radius: 12px;">
+          xmlns="http://www.w3.org/2000/svg" class="svg-arredondado">
           <defs>
             <g id="house">
               <rect x="0" y="0" width="28" height="22" fill="#EAF2FF" />
@@ -498,7 +508,7 @@
       <div class="container">
         <div class="ods-header">
           <div>
-            <h2 class="section-title" style="margin-bottom: 0;">Indicadores e ODS</h2>
+            <h2 class="section-title mb-0">Indicadores e ODS</h2>
           </div>
           <a class="btn btn-primary" href="impacto.html">Ver impacto detalhado</a>
         </div>
@@ -519,7 +529,7 @@
     </section>
 
     <!-- CTA FOOTER -->
-    <section class="section" style="padding-top: 0;">
+    <section class="section pt-0">
       <div class="container">
         <div class="cta-banner">
           <div class="cta-content">

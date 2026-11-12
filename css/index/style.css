@@ -634,3 +634,10 @@
         display: none;
       }
     }
+
+    /* UTILITÁRIOS (substituem os estilos inline do HTML) */
+    .mb-0 { margin-bottom: 0; }
+    .mb-60 { margin-bottom: 60px; }
+    .pt-0 { padding-top: 0; }
+    .texto-apoio { color: var(--text-muted); margin-bottom: 40px; }
+    .svg-arredondado { border-radius: 12px; }

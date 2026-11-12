@@ -56,10 +56,14 @@ AlertaBairro/
 ├── equipe.html       (site: equipe)
 ├── README.md
 ├── css/
-│   └── style.css
+│   ├── style.css          (painel)
+│   ├── paginas.css        (impacto, equipe e menu das páginas do site)
+│   ├── acessibilidade.css (tamanho do texto e alto contraste)
+│   └── index/style.css    (home e base do site)
 ├── js/
 │   ├── main.js       (dados dos bairros e dos locais cobertos fictícios, utilitários e validações; menu do site)
 │   ├── mapa.js       (mapa próprio: imagens, áreas, marcadores, rota em linha reta, zoom e arraste)
+│   ├── acessibilidade.js (A−, A+ e alto contraste em todas as páginas)
 │   └── app.js        (painel: onde estou, rota de fuga, mapa, relatos, alertas, configurações)
 └── img/
     └── favicon.svg   (ícone do site)
@@ -76,6 +80,9 @@ AlertaBairro/
 - **Alertas personalizados:** seleção de bairro, alerta atual com nível (informativo, atenção, risco elevado), orientações, histórico e notificações dentro do aplicativo. O botão "Simular atualização de chuva" recalcula o risco e gera um novo alerta.
 - **Inscrição demonstrativa:** formulário com validação de nome, e-mail, CEP e bairro (mantido da versão anterior).
 - **Comunidade e configurações:** estatísticas dos relatos, contatos de emergência (199, 193, 192), nome para a saudação, localização padrão, bairros acompanhados e gerenciamento dos dados locais.
+- **Simulador de chuva (Monitoramento):** controle de 0 a 200% da chuva do cenário base. O risco dos 12 bairros muda na hora, ao soltar o controle são gerados alertas dos bairros que mudaram de nível e a rota de fuga é recalculada. Há atalhos Garoa, Cenário base e Tempestade forte.
+- **Rota de fuga para mobilidade reduzida:** na tela de fuga, o perfil "Mobilidade reduzida" mostra só locais cobertos com rampa até 5 km, penaliza ladeiras (dados fictícios de rampa e piso), estima o tempo a pé em velocidade menor e traz orientações de apoio (199 e 192).
+- **Acessibilidade além do básico:** barra no topo de todas as páginas com **A− / A+** (4 tamanhos de texto) e **Alto contraste**; a escolha fica salva no navegador.
 - Acessibilidade: HTML semântico, labels associados, `aria-live`, foco visível, link para pular ao conteúdo, navegação por teclado e respeito a `prefers-reduced-motion`.
 
 ### Limitações e o que depende de integrações externas

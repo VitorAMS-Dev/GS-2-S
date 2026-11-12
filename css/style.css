@@ -1293,7 +1293,7 @@ body.app .site-footer {
   font-weight: 700;
   cursor: pointer;
   padding: 0;
-  text-decoration: underline;
+  text-decoration: none;
   text-underline-offset: 3px;
 }
 
@@ -3783,3 +3783,20 @@ body.app .site-header {
     transition: none;
   }
 }
+
+
+/* ---- Simulador de chuva e perfil de deslocamento ---- */
+.sim-card { margin-bottom: 16px; }
+.sim-controle { display: grid; gap: 8px; margin: 12px 0; }
+.sim-controle label { font-weight: 600; }
+.sim-controle input[type="range"] { width: 100%; min-height: 32px; accent-color: var(--blue); cursor: pointer; }
+.sim-escala { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--muted); }
+.sim-cenarios { margin-bottom: 12px; }
+.sim-resumo { margin: 0; padding: 10px 12px; border-left: 4px solid var(--blue); background: var(--bg); border-radius: 6px; }
+.perfil-opcoes { border: 0; margin: 0; padding: 0; display: grid; gap: 10px; }
+.perfil-opcoes legend { font-weight: 700; font-size: 1.05rem; padding: 0; margin-bottom: 10px; }
+.perfil-op { display: flex; gap: 12px; align-items: flex-start; padding: 12px; border: 1px solid var(--line); border-radius: 10px; cursor: pointer; }
+.perfil-op input { margin-top: 4px; width: 20px; height: 20px; accent-color: var(--blue); flex: none; }
+.perfil-op span { display: grid; gap: 2px; }
+.perfil-op:has(input:checked) { border-color: var(--blue); box-shadow: 0 0 0 2px var(--blue); }
+.perfil-op:focus-within { outline: 3px solid #f59e0b; outline-offset: 2px; }

@@ -10,7 +10,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
   <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
   <link rel="stylesheet" href="css/style.css?v=4">
+  <link rel="stylesheet" href="css/acessibilidade.css?v=4">
   <script src="js/main.js?v=4" defer></script>
+  <script src="js/acessibilidade.js?v=4" defer></script>
   <script src="js/mapa.js?v=4" defer></script>
   <script src="js/app.js?v=4" defer></script>
 </head>
@@ -179,6 +181,14 @@
                 <div id="slot-local-fuga"></div>
               </section>
 
+              <section class="card perfil-fuga" aria-labelledby="t-perfil-fuga">
+                <fieldset class="perfil-opcoes">
+                  <legend id="t-perfil-fuga">Como você vai se deslocar?</legend>
+                  <label class="perfil-op"><input type="radio" name="fuga-perfil" value="padrao"><span><strong>Sem restrições</strong><span class="muted">Prioriza bairros sem risco e o caminho mais curto.</span></span></label>
+                  <label class="perfil-op"><input type="radio" name="fuga-perfil" value="reduzida"><span><strong>Mobilidade reduzida</strong><span class="muted">Idosos, cadeirantes, gestantes ou quem usa muleta. Só mostra locais com rampa, evita ladeiras e prioriza o que está mais perto.</span></span></label>
+                </fieldset>
+              </section>
+
               <section class="card destino-card" id="fuga-destino" aria-labelledby="t-fuga-destino" aria-live="polite" hidden></section>
 
               <section class="card contatos-fuga" aria-labelledby="t-contatos-fuga">
@@ -226,6 +236,21 @@
             </ul>
           </div>
           <div class="notice" role="note"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-info"/></svg><p><strong>Dados simulados.</strong> Os bairros são referências reais, mas os indicadores são inventados para fins acadêmicos.</p></div>
+          <section class="card sim-card" aria-labelledby="t-sim">
+            <h3 id="t-sim">Simulador de chuva</h3>
+            <p class="muted">Arraste o controle e veja o risco de todos os bairros mudar na hora, com alertas novos e a rota de fuga recalculada.</p>
+            <div class="sim-controle">
+              <label for="sim-fator">Intensidade da chuva: <output id="sim-fator-valor" for="sim-fator">100%</output> do cenário base</label>
+              <input type="range" id="sim-fator" min="0" max="200" step="5" value="100">
+              <div class="sim-escala" aria-hidden="true"><span>Sem chuva</span><span>Cenário base</span><span>Tempestade</span></div>
+            </div>
+            <div class="btn-row sim-cenarios">
+              <button type="button" class="btn btn-secondary" data-fator="30">Garoa</button>
+              <button type="button" class="btn btn-secondary" data-fator="100">Cenário base</button>
+              <button type="button" class="btn btn-secondary" data-fator="160">Tempestade forte</button>
+            </div>
+            <p class="sim-resumo" id="sim-resumo" role="status" aria-live="polite">Mova o controle ou escolha um cenário.</p>
+          </section>
           <form class="toolbar mon-toolbar" role="search" aria-label="Filtrar bairros" novalidate>
             <div class="field mon-busca"><label for="mon-busca">Buscar bairro pelo nome</label>
               <div class="mon-input"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-search"/></svg><input type="search" id="mon-busca" placeholder="Ex.: Ibura" autocomplete="off"></div></div>

@@ -5,42 +5,125 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Equipe | AlertaBairro</title>
-  <meta name="description" content="Integrantes do projeto AlertaBairro, responsabilidades e processo de desenvolvimento da Global Solution FIAP 2026/2.">
+  <meta name="description"
+    content="Integrantes do projeto AlertaBairro, responsabilidades e processo de desenvolvimento da Global Solution FIAP 2026/2.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap"
+    rel="stylesheet">
   <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
   <link rel="stylesheet" href="css/index/style.css?v=4">
   <link rel="stylesheet" href="css/paginas.css?v=4">
+  <link rel="stylesheet" href="css/acessibilidade.css?v=4">
   <script src="js/main.js?v=4" defer></script>
+  <script src="js/acessibilidade.js?v=4" defer></script>
 </head>
 
 <body>
   <svg class="sprite" aria-hidden="true" focusable="false">
-    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></symbol>
-    <symbol id="i-activity" viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></symbol>
-    <symbol id="i-map" viewBox="0 0 24 24"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14"/><path d="M15 6v14"/></symbol>
-    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3L2 21h20L12 3z"/><path d="M12 10v5"/><path d="M12 18h.01"/></symbol>
-    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0c0 6 2 7 2 8H4c0-1 2-2 2-8z"/><path d="M10 21h4"/></symbol>
-    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6"/><circle cx="17" cy="9" r="2.5"/><path d="M18 14c2.5.5 4 2.5 4 5"/></symbol>
-    <symbol id="i-settings" viewBox="0 0 24 24"><path d="M4 6h10"/><path d="M18 6h2"/><circle cx="16" cy="6" r="2"/><path d="M4 12h2"/><path d="M10 12h10"/><circle cx="8" cy="12" r="2"/><path d="M4 18h10"/><path d="M18 18h2"/><circle cx="16" cy="18" r="2"/></symbol>
-    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></symbol>
-    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
-    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
-    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
-    <symbol id="i-droplet" viewBox="0 0 24 24"><path d="M12 3s7 7.5 7 12a7 7 0 0 1-14 0c0-4.5 7-12 7-12z"/></symbol>
-    <symbol id="i-cloud-rain" viewBox="0 0 24 24"><path d="M7 15a4.5 4.5 0 0 1-.5-9A6 6 0 0 1 18 7.5a4 4 0 0 1-.5 7.5H7z"/><path d="M8 18l-1 3M12 18l-1 3M16 18l-1 3"/></symbol>
-    <symbol id="i-thermometer" viewBox="0 0 24 24"><path d="M14 14.5V5a2 2 0 0 0-4 0v9.5a4 4 0 1 0 4 0z"/></symbol>
-    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7"/></symbol>
-    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s7-6 7-11a7 7 0 0 0-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></symbol>
-    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"/><path d="M9 12l2 2 4-4"/></symbol>
-    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
-    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></symbol>
-    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></symbol>
-    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></symbol>
-    <symbol id="i-building" viewBox="0 0 24 24"><path d="M4 21V5l8-2v18"/><path d="M12 9l8 2v10"/><path d="M8 8h1M8 12h1M8 16h1M16 14h1M16 18h1"/></symbol>
-    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-8-4.6-8-10.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 8 2.5C20 15.4 12 20 12 20z"/></symbol>
-    <symbol id="i-book" viewBox="0 0 24 24"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3V4z"/><path d="M5 17a3 3 0 0 1 3-3h11"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24">
+      <path d="M3 11l9-8 9 8" />
+      <path d="M5 10v10h14V10" />
+      <path d="M10 20v-6h4v6" />
+    </symbol>
+    <symbol id="i-activity" viewBox="0 0 24 24">
+      <path d="M3 12h4l3-8 4 16 3-8h4" />
+    </symbol>
+    <symbol id="i-map" viewBox="0 0 24 24">
+      <path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2z" />
+      <path d="M9 4v14" />
+      <path d="M15 6v14" />
+    </symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24">
+      <path d="M12 3L2 21h20L12 3z" />
+      <path d="M12 10v5" />
+      <path d="M12 18h.01" />
+    </symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24">
+      <path d="M6 9a6 6 0 0 1 12 0c0 6 2 7 2 8H4c0-1 2-2 2-8z" />
+      <path d="M10 21h4" />
+    </symbol>
+    <symbol id="i-users" viewBox="0 0 24 24">
+      <circle cx="9" cy="8" r="3.5" />
+      <path d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6" />
+      <circle cx="17" cy="9" r="2.5" />
+      <path d="M18 14c2.5.5 4 2.5 4 5" />
+    </symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24">
+      <path d="M4 6h10" />
+      <path d="M18 6h2" />
+      <circle cx="16" cy="6" r="2" />
+      <path d="M4 12h2" />
+      <path d="M10 12h10" />
+      <circle cx="8" cy="12" r="2" />
+      <path d="M4 18h10" />
+      <path d="M18 18h2" />
+      <circle cx="16" cy="18" r="2" />
+    </symbol>
+    <symbol id="i-search" viewBox="0 0 24 24">
+      <circle cx="11" cy="11" r="7" />
+      <path d="M20 20l-4-4" />
+    </symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24">
+      <path d="M12 5v14M5 12h14" />
+    </symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24">
+      <path d="M4 6h16M4 12h16M4 18h16" />
+    </symbol>
+    <symbol id="i-x" viewBox="0 0 24 24">
+      <path d="M6 6l12 12M18 6L6 18" />
+    </symbol>
+    <symbol id="i-droplet" viewBox="0 0 24 24">
+      <path d="M12 3s7 7.5 7 12a7 7 0 0 1-14 0c0-4.5 7-12 7-12z" />
+    </symbol>
+    <symbol id="i-cloud-rain" viewBox="0 0 24 24">
+      <path d="M7 15a4.5 4.5 0 0 1-.5-9A6 6 0 0 1 18 7.5a4 4 0 0 1-.5 7.5H7z" />
+      <path d="M8 18l-1 3M12 18l-1 3M16 18l-1 3" />
+    </symbol>
+    <symbol id="i-thermometer" viewBox="0 0 24 24">
+      <path d="M14 14.5V5a2 2 0 0 0-4 0v9.5a4 4 0 1 0 4 0z" />
+    </symbol>
+    <symbol id="i-check" viewBox="0 0 24 24">
+      <path d="M5 12.5l4.5 4.5L19 7" />
+    </symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24">
+      <path d="M12 21s7-6 7-11a7 7 0 0 0-14 0c0 5 7 11 7 11z" />
+      <circle cx="12" cy="10" r="2.5" />
+    </symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24">
+      <path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z" />
+      <path d="M9 12l2 2 4-4" />
+    </symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v5l3 2" />
+    </symbol>
+    <symbol id="i-info" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 11v5" />
+      <path d="M12 8h.01" />
+    </symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24">
+      <path d="M7 17L17 7" />
+      <path d="M8 7h9v9" />
+    </symbol>
+    <symbol id="i-target" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="9" />
+      <circle cx="12" cy="12" r="5" />
+      <circle cx="12" cy="12" r="1" />
+    </symbol>
+    <symbol id="i-building" viewBox="0 0 24 24">
+      <path d="M4 21V5l8-2v18" />
+      <path d="M12 9l8 2v10" />
+      <path d="M8 8h1M8 12h1M8 16h1M16 14h1M16 18h1" />
+    </symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24">
+      <path d="M12 20s-8-4.6-8-10.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 8 2.5C20 15.4 12 20 12 20z" />
+    </symbol>
+    <symbol id="i-book" viewBox="0 0 24 24">
+      <path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3V4z" />
+      <path d="M5 17a3 3 0 0 1 3-3h11" />
+    </symbol>
   </svg>
 
   <a class="skip-link" href="#conteudo">Ir para o conteúdo principal</a>
@@ -52,13 +135,16 @@
       <a class="brand" href="index.html" aria-label="AlertaBairro, página inicial">
         <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
           <path d="M16 2C16 2 6 13.5 6 20a10 10 0 0 0 20 0C26 13.5 16 2 16 2Z" fill="#2563eb" />
-          <path d="M11 20.5l3.5 3.5 7-7.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M11 20.5l3.5 3.5 7-7.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"
+            stroke-linejoin="round" />
         </svg>
         <span>AlertaBairro</span>
       </a>
       <button class="menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="menu-principal">
         <span class="sr-only">Abrir menu</span>
-        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
       </button>
       <nav aria-label="Navegação principal">
         <ul class="menu" id="menu-principal">
@@ -78,7 +164,8 @@
       <div class="container">
         <p class="hero-tagline">FIAP · Global Solution 2026/2</p>
         <h1 id="titulo-equipe">Nossa Equipe</h1>
-        <p class="lead">Estudantes da FIAP desenvolvendo o AlertaBairro para a Global Solution 2026/2, tema CitizenTech.</p>
+        <p class="lead">Estudantes da FIAP desenvolvendo o AlertaBairro para a Global Solution 2026/2, tema CitizenTech.
+        </p>
       </div>
     </section>
 
@@ -88,73 +175,79 @@
           <h2 class="section-title" id="titulo-integrantes">Integrantes</h2>
         </div>
         <div class="callout" role="note">
-          <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-info"/></svg>
+          <svg class="icon" aria-hidden="true" focusable="false">
+            <use href="#i-info" />
+          </svg>
           <p>Os dados abaixo são provisórios. Substitua os campos entre colchetes pelas informações reais do grupo e
             duplique ou remova cards conforme o número de integrantes.</p>
         </div>
         <div class="grid grid-2">
           <article class="team-card">
-            <div class="avatar" role="img" aria-label="Avatar provisório do integrante 1">?</div>
-            <h3>[Nome completo do integrante 1]</h3>
+            <div class="avatar" role="img" aria-label="Avatar de Guilherme">?</div>
+            <h3>GUILHERME SILVA COSTA</h3>
             <dl>
               <dt>RM</dt>
-              <dd>[RM a preencher]</dd>
-              <dt>Curso</dt>
-              <dd>[Curso a preencher]</dd>
-              <dt>Responsabilidade no projeto</dt>
-              <dd>[Responsabilidade a preencher]</dd>
+              <dd>572638</dd>
             </dl>
             <div class="team-links">
-              <span class="link-pendente">GitHub: link pendente</span>
+              <a href="https://github.com/guilhermescosta-dev" target="_blank" rel="noopener noreferrer">GitHub</a>
+              <a href="https://www.linkedin.com/in/guilherme-silva-costa/" target="_blank"
+                rel="noopener noreferrer">LinkedIn</a>
+            </div>
+          </article>
+
+          <article class="team-card">
+            <div class="avatar" role="img" aria-label="Avatar de Matheus">?</div>
+            <h3>MATHEUS LEITE CARNEIRO</h3>
+            <dl>
+              <dt>RM</dt>
+              <dd>568733</dd>
+            </dl>
+            <div class="team-links">
+              <a href="https://github.com/MatheusLeiteCarneiro" target="_blank" rel="noopener noreferrer">GitHub</a>
+              <a href="https://www.linkedin.com/in/matheusleitecarneiro/" target="_blank"
+                rel="noopener noreferrer">LinkedIn</a>
+            </div>
+          </article>
+
+          <article class="team-card">
+            <div class="avatar" role="img" aria-label="Avatar de Pedro">?</div>
+            <h3>PEDRO CORVINO GAMBA</h3>
+            <dl>
+              <dt>RM</dt>
+              <dd>573756</dd>
+            </dl>
+            <div class="team-links">
+              <a href="https://github.com/pedrocgamba-a11y" target="_blank" rel="noopener noreferrer">GitHub</a>
               <span class="link-pendente">LinkedIn: link pendente</span>
             </div>
           </article>
+
           <article class="team-card">
-            <div class="avatar" role="img" aria-label="Avatar provisório do integrante 2">?</div>
-            <h3>[Nome completo do integrante 2]</h3>
+            <div class="avatar" role="img" aria-label="Avatar de Pietro">?</div>
+            <h3>PIETRO GONÇALVES PONCIANO</h3>
             <dl>
               <dt>RM</dt>
-              <dd>[RM a preencher]</dd>
-              <dt>Curso</dt>
-              <dd>[Curso a preencher]</dd>
-              <dt>Responsabilidade no projeto</dt>
-              <dd>[Responsabilidade a preencher]</dd>
+              <dd>570521</dd>
             </dl>
             <div class="team-links">
-              <span class="link-pendente">GitHub: link pendente</span>
-              <span class="link-pendente">LinkedIn: link pendente</span>
+              <a href="https://github.com/PietroPonciano" target="_blank" rel="noopener noreferrer">GitHub</a>
+              <a href="https://www.linkedin.com/in/pietro-gonçalves-ponciano/" target="_blank"
+                rel="noopener noreferrer">LinkedIn</a>
             </div>
           </article>
+
           <article class="team-card">
-            <div class="avatar" role="img" aria-label="Avatar provisório do integrante 3">?</div>
-            <h3>[Nome completo do integrante 3]</h3>
+            <div class="avatar" role="img" aria-label="Avatar de Vitor">?</div>
+            <h3>VITOR ALMEIDA DE MEIRA SANTOS</h3>
             <dl>
               <dt>RM</dt>
-              <dd>[RM a preencher]</dd>
-              <dt>Curso</dt>
-              <dd>[Curso a preencher]</dd>
-              <dt>Responsabilidade no projeto</dt>
-              <dd>[Responsabilidade a preencher]</dd>
+              <dd>572250</dd>
             </dl>
             <div class="team-links">
-              <span class="link-pendente">GitHub: link pendente</span>
-              <span class="link-pendente">LinkedIn: link pendente</span>
-            </div>
-          </article>
-          <article class="team-card">
-            <div class="avatar" role="img" aria-label="Avatar provisório do integrante 4">?</div>
-            <h3>[Nome completo do integrante 4]</h3>
-            <dl>
-              <dt>RM</dt>
-              <dd>[RM a preencher]</dd>
-              <dt>Curso</dt>
-              <dd>[Curso a preencher]</dd>
-              <dt>Responsabilidade no projeto</dt>
-              <dd>[Responsabilidade a preencher]</dd>
-            </dl>
-            <div class="team-links">
-              <span class="link-pendente">GitHub: link pendente</span>
-              <span class="link-pendente">LinkedIn: link pendente</span>
+              <a href="https://github.com/VitorAMS-Dev" target="_blank" rel="noopener noreferrer">GitHub</a>
+              <a href="https://www.linkedin.com/in/vitor-almeida-de-meira-santos/" target="_blank"
+                rel="noopener noreferrer">LinkedIn</a>
             </div>
           </article>
         </div>
@@ -177,25 +270,25 @@
             <div class="step-dot">2</div>
             <h4>Design e identidade visual</h4>
             <p>Paleta, componentes e protótipo de navegação.</p>
-            <span class="resp">Responsável: [a definir]</span>
+
           </div>
           <div class="step">
             <div class="step-dot">3</div>
             <h4>Desenvolvimento front-end</h4>
             <p>HTML, CSS e JavaScript do painel, dos filtros e do formulário.</p>
-            <span class="resp">Responsável: [a definir]</span>
+
           </div>
           <div class="step">
             <div class="step-dot">4</div>
             <h4>Conteúdo, documentação e pitch</h4>
             <p>Textos institucionais, README e vídeo.</p>
-            <span class="resp">Responsável: [a definir]</span>
+
           </div>
           <div class="step">
             <div class="step-dot">5</div>
             <h4>Testes e revisão</h4>
             <p>Responsividade, acessibilidade e revisão do uso de IA generativa.</p>
-            <span class="resp">Responsável: [a definir]</span>
+
           </div>
         </div>
       </div>
