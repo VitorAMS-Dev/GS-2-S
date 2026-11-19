@@ -10,7 +10,7 @@ Integrantes (Nome - RM):
 - Pietro Gonçalves Ponciano - RM 570521
 - Vitor Almeida de Meira Santos - RM 572250
 
-Link do vídeo pitch: [PENDENTE: inserir o link público do vídeo pitch]
+Link do vídeo pitch: https://www.youtube.com/watch?v=FcZqA_q6Nv4
 
 Repositório GitHub: https://github.com/VitorAMS-Dev/GS-2-S
-Site publicado: [PENDENTE: inserir o link do GitHub Pages, se houver]
+Site publicado: https://alerta-bairro.netlify.app
