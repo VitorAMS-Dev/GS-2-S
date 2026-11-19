@@ -136,7 +136,7 @@ Grupo: **AlertaBairro**
 ## 11. Links do projeto
 
 - **Repositório GitHub:** <https://github.com/VitorAMS-Dev/GS-2-S>
-- **Site publicado (GitHub Pages):**<https://alerta-bairro.netlify.app>
+- **Site publicado:**<https://alerta-bairro.netlify.app>
 
 ## 12. Link do vídeo pitch
 
@@ -151,14 +151,14 @@ Link do vídeo: https://www.youtube.com/watch?v=FcZqA_q6Nv4
 - Defesa Civil Nacional: <https://www.gov.br/mdr/pt-br/assuntos/protecao-e-defesa-civil>
 - INMET: <https://portal.inmet.gov.br>
 
-## **14. Declaração de utilização de IA generativa**
+## 14. Declaração de utilização de IA generativa
 
-| Item                                  | Descrição                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Ferramentas de IA utilizadas          | Ferramentas de IA generativa para apoio à criação de mockups, revisão de código e edição do vídeo pitch.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| Finalidade da utilização              | Auxiliar na criação de uma referência visual inicial, apoiar a revisão técnica do projeto e contribuir com a edição e organização do vídeo pitch.                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| Partes do projeto apoiadas por IA     | Foi elaborado um prompt detalhado com os requisitos e características desejadas, utilizado para gerar um mockup inicial. Esse resultado serviu como ponto de partida para o desenvolvimento, sendo posteriormente aprimorado e adaptado de acordo com as necessidades do projeto. Também foram utilizadas ferramentas de IA para analisar o código e identificar possíveis desvios em relação ao escopo, ao tema e às restrições estabelecidas. Adicionalmente, houve auxílio na edição do vídeo pitch, contribuindo para a organização e o aprimoramento da apresentação do projeto.          |
-| Revisão e validação pelos integrantes | O mockup gerado foi utilizado apenas como referência inicial. Os integrantes analisaram o resultado, realizaram ajustes e desenvolveram a solução de forma iterativa. Também foram realizadas revisões de código com auxílio de IA para verificar se as implementações estavam de acordo com o que foi solicitado, se não desviavam do tema proposto e se respeitavam os limites e requisitos permitidos. As sugestões foram avaliadas pelos integrantes antes de serem aplicadas. O vídeo pitch também foi revisado pelos integrantes, que avaliaram e validaram o resultado final da edição. |
+| Item | Descrição |
+|---|---|
+| Ferramentas de IA utilizadas | ChatGPT e Claude. |
+| Finalidade da utilização | O ChatGPT foi utilizado para auxiliar na criação de mockups, revisão técnica do código e verificação de conformidade com os requisitos do projeto. O Claude foi utilizado como ferramenta de apoio à edição do vídeo pitch. |
+| Partes do projeto apoiadas por IA | Foi elaborado um prompt detalhado com os requisitos e características desejadas, utilizado no ChatGPT para gerar um mockup inicial. Esse resultado serviu como ponto de partida para o desenvolvimento, sendo posteriormente aprimorado e adaptado de acordo com as necessidades do projeto. O ChatGPT também foi utilizado para analisar o código e identificar possíveis melhorias, inconsistências e desvios em relação ao escopo, ao tema e às restrições estabelecidas. Adicionalmente, o Claude foi utilizado como apoio na edição e organização do vídeo pitch, contribuindo para o aprimoramento da apresentação do projeto. |
+| Revisão e validação pelos integrantes | O mockup gerado foi utilizado apenas como referência inicial. Os integrantes analisaram o resultado, realizaram ajustes e desenvolveram a solução de forma iterativa. Também foram realizadas revisões de código com auxílio do ChatGPT para verificar se as implementações estavam de acordo com o que foi solicitado, se não desviavam do tema proposto e se respeitavam os limites e requisitos permitidos. As sugestões foram avaliadas pelos integrantes antes de serem aplicadas. O vídeo pitch, editado com auxílio do Claude, também foi revisado pelos integrantes, que avaliaram e validaram o resultado final. |
 
 ## 15. Aviso sobre dados
 
