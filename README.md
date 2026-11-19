@@ -46,15 +46,25 @@ Construir um site funcional, responsivo e acessível que demonstre como a tecnol
 
 Sem frameworks, bibliotecas, CSS inline ou JavaScript inline.
 
+### Sobre o mapa
+
+- **Nenhum framework ou biblioteca de mapas foi utilizado** (não há Leaflet, Google Maps API, OpenLayers ou similares). O mapa é feito apenas com HTML, CSS e JavaScript puro, no arquivo `js/mapa.js`.
+- O fundo do mapa é **apenas uma imagem**: arquivos de imagem do OpenStreetMap carregados em tags `<img>` comuns, como qualquer imagem de uma página. Não é carregado nenhum script externo.
+- Tudo o que importa para a solução é desenhado pelo nosso próprio código: as áreas coloridas por nível de risco, os marcadores dos bairros e dos relatos, a rota de fuga, o zoom e o arraste. As posições são calculadas em JavaScript a partir das coordenadas que estão nos arrays de objetos (`js/main.js`) e exibidas pelo DOM.
+- **O site funciona sem essa imagem.** Se ela não carregar (por exemplo, sem internet), as áreas de risco, os marcadores e a rota continuam aparecendo sobre um fundo liso, e todas as funcionalidades seguem disponíveis: simulador de chuva, níveis de risco, rota de fuga, ocorrências e alertas.
+- Os modos "Google Maps" e "Satélite" são opcionais e usam somente a tag HTML `<iframe>`, sem nenhum script do Google. A funcionalidade principal não depende deles.
+
 ## 7. Estrutura de pastas
 
 ```
-AlertaBairro/
+GS-2-S/
 ├── index.html        (site: apresentação)
 ├── solucao.html      (painel / aplicativo)
 ├── impacto.html      (site: ODS e impacto)
 ├── equipe.html       (site: equipe)
 ├── README.md
+├── integrantes.txt   (nome do grupo, integrantes, RMs e link do pitch)
+├── LICENSE
 ├── css/
 │   ├── style.css          (painel)
 │   ├── paginas.css        (impacto, equipe e menu das páginas do site)
@@ -100,11 +110,11 @@ AlertaBairro/
 
 1. Clone o repositório:
    ```bash
-   git clone <URL-DO-REPOSITORIO>
+   git clone https://github.com/VitorAMS-Dev/GS-2-S.git
    ```
 2. Abra a pasta do projeto:
    ```bash
-   cd AlertaBairro
+   cd GS-2-S
    ```
 3. Abra o arquivo `index.html` com um clique duplo ou arrastando-o para o navegador. O painel fica em `solucao.html`.
 4. Opcional, com o VS Code: instale a extensão **Live Server**, clique com o botão direito em `index.html` e escolha **Open with Live Server**.
@@ -113,31 +123,26 @@ Nenhuma instalação de dependências é necessária. É preciso estar online pa
 
 ## 10. Integrantes e RMs
 
-| Nome completo | RM | Curso | GitHub | LinkedIn |
-|---|---|---|---|---|
-| [Nome do integrante 1] | [RM] | [Curso] | [link] | [link] |
-| [Nome do integrante 2] | [RM] | [Curso] | [link] | [link] |
-| [Nome do integrante 3] | [RM] | [Curso] | [link] | [link] |
-| [Nome do integrante 4] | [RM] | [Curso] | [link] | [link] |
+Grupo: **AlertaBairro**
 
-## 11. Divisão de responsabilidades
+| Nome completo | RM | GitHub | LinkedIn |
+|---|---|---|---|
+| Guilherme Silva Costa | 572638 | [guilhermescosta-dev](https://github.com/guilhermescosta-dev) | [LinkedIn](https://www.linkedin.com/in/guilherme-silva-costa/) |
+| Matheus Leite Carneiro | 568733 | [MatheusLeiteCarneiro](https://github.com/MatheusLeiteCarneiro) | [LinkedIn](https://www.linkedin.com/in/matheusleitecarneiro/) |
+| Pedro Corvino Gamba | 573756 | [pedrocgamba-a11y](https://github.com/pedrocgamba-a11y) | [LinkedIn](https://www.linkedin.com/in/pedro-gamba-312402408/) |
+| Pietro Gonçalves Ponciano | 570521 | [PietroPonciano](https://github.com/PietroPonciano) | [LinkedIn](https://www.linkedin.com/in/pietro-gonçalves-ponciano/) |
+| Vitor Almeida de Meira Santos | 572250 | [VitorAMS-Dev](https://github.com/VitorAMS-Dev) | [LinkedIn](https://www.linkedin.com/in/vitor-almeida-de-meira-santos/) |
 
-| Integrante | Responsabilidade |
-|---|---|
-| [Nome do integrante 1] | [A definir] |
-| [Nome do integrante 2] | [A definir] |
-| [Nome do integrante 3] | [A definir] |
-| [Nome do integrante 4] | [A definir] |
+## 11. Links do projeto
 
-## 12. Link do repositório GitHub
+- **Repositório GitHub:** <https://github.com/VitorAMS-Dev/GS-2-S>
+- **Site publicado (GitHub Pages):**<https://alerta-bairro.netlify.app>
 
-[Inserir o link do repositório]
+## 12. Link do vídeo pitch
 
-## 13. Link do vídeo pitch
+Link do vídeo: https://www.youtube.com/watch?v=FcZqA_q6Nv4
 
-[Inserir o link do vídeo pitch]
-
-## 14. Referências
+## 13. Referências
 
 - IBGE e Cemaden. *População em Áreas de Risco no Brasil*, 2018: <https://www.ibge.gov.br/apps/populacaoareasderisco/>
 - ONU Brasil. ODS 13: <https://brasil.un.org/pt-br/sdgs/13>
@@ -146,17 +151,15 @@ Nenhuma instalação de dependências é necessária. É preciso estar online pa
 - Defesa Civil Nacional: <https://www.gov.br/mdr/pt-br/assuntos/protecao-e-defesa-civil>
 - INMET: <https://portal.inmet.gov.br>
 
-## 15. Declaração de utilização de IA generativa
+## **14. Declaração de utilização de IA generativa**
 
-Preencha esta seção com informações reais antes da entrega.
+| Item                                  | Descrição                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Ferramentas de IA utilizadas          | Ferramentas de IA generativa para apoio à criação de mockups e revisão de código.                                                                                                                                                                                                                                                                                                                                                                                                       |
+| Finalidade da utilização              | Auxiliar na criação de uma referência visual inicial e apoiar a revisão técnica do projeto, verificando a conformidade com os requisitos estabelecidos.                                                                                                                                                                                                                                                                                                                                 |
+| Partes do projeto apoiadas por IA     | Foi elaborado um prompt detalhado com os requisitos e características desejadas, utilizado para gerar um mockup inicial. Esse resultado serviu como ponto de partida para o desenvolvimento, sendo posteriormente aprimorado e adaptado de acordo com as necessidades do projeto. Também foram utilizadas ferramentas de IA para analisar o código e identificar possíveis desvios em relação ao escopo, ao tema e às restrições estabelecidas.                                         |
+| Revisão e validação pelos integrantes | O mockup gerado foi utilizado apenas como referência inicial. Os integrantes analisaram o resultado, realizaram ajustes e desenvolveram a solução de forma iterativa. Além disso, foram realizadas revisões de código com auxílio de IA para verificar se as implementações estavam de acordo com o que foi solicitado, se não desviavam do tema proposto e se respeitavam os limites e requisitos permitidos. As sugestões foram avaliadas pelos integrantes antes de serem aplicadas. |
 
-| Item | Descrição |
-|---|---|
-| Ferramentas de IA utilizadas | [Informar as ferramentas] |
-| Finalidade da utilização | [Informar a finalidade] |
-| Partes do projeto apoiadas por IA | [Informar as partes] |
-| Revisão e validação pelos integrantes | [Descrever como o código, os textos e os dados foram revisados e testados] |
-
-## 16. Aviso sobre dados
+## 15. Aviso sobre dados
 
 Os bairros são referências geográficas reais, mas todos os indicadores climáticos, níveis de risco, alertas, **locais cobertos e rotas de fuga** são fictícios ou demonstrativos. Os relatos iniciais marcados como "Relato demonstrativo" são inventados; os relatos que você registra ficam apenas no seu navegador e são sempre não verificados.
