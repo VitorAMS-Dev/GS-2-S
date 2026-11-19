@@ -1,0 +1,16 @@
+GLOBAL SOLUTION 2026/2 - CITIZENTECH
+FIAP - 1º ano Engenharia de Software
+
+Nome do grupo: AlertaBairro
+
+Integrantes (Nome - RM):
+- Guilherme Silva Costa - RM 572638
+- Matheus Leite Carneiro - RM 568733
+- Pedro Corvino Gamba - RM 573756
+- Pietro Gonçalves Ponciano - RM 570521
+- Vitor Almeida de Meira Santos - RM 572250
+
+Link do vídeo pitch: [PENDENTE: inserir o link público do vídeo pitch]
+
+Repositório GitHub: https://github.com/VitorAMS-Dev/GS-2-S
+Site publicado: [PENDENTE: inserir o link do GitHub Pages, se houver]
